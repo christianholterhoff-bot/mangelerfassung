@@ -1268,14 +1268,62 @@ const POLYGON_TYPEN = {
 };
 
 // Polygon-Zeichnen starten
+// Einfaches Modal ohne esc()-Einschränkung
+function zeigeAuswahlModal(html) {
+  const vor = document.getElementById('auswahlModal');
+  if (vor) vor.remove();
+  const bg = document.createElement('div');
+  bg.id = 'auswahlModal';
+  bg.className = 'dialog-bg';
+  bg.innerHTML = html;
+  document.body.appendChild(bg);
+}
+function schliesseAuswahlModal() {
+  const m = document.getElementById('auswahlModal');
+  if (m) m.remove();
+}
+
+// Auswahl: Mangel punktuell oder Bereich zeichnen
+function polygonTypAuswaehlen(typ) {
+  const cfg = POLYGON_TYPEN[typ];
+  zeigeAuswahlModal(`<div class="dialog-box">
+    <h3 style="border-left:3px solid ${cfg.farbe};padding-left:8px;margin-bottom:14px">${cfg.label}</h3>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button onclick="schliesseAuswahlModal();polygonZeichnenStarten('${typ}')" class="btn btn-blau" style="width:100%;padding:12px;font-size:14px;text-align:left">
+        ◻&nbsp; Bereich als Polygon zeichnen
+      </button>
+      <button onclick="schliesseAuswahlModal();mangelMitTypStarten('${typ}')" class="btn btn-grau" style="width:100%;padding:12px;font-size:14px;text-align:left">
+        📍&nbsp; Einzelnen Mangel punktuell erfassen
+      </button>
+      <button onclick="schliesseAuswahlModal()" class="btn btn-grau" style="width:100%;padding:8px;font-size:13px">Abbrechen</button>
+    </div>
+  </div>`);
+}
+
+// Mangel-Neu-Formular mit vorausgefülltem Typ starten
+function mangelMitTypStarten(typ) {
+  // Kategorie und Mangeltyp aus Polygon-Typ ableiten
+  const typMap = {
+    abgenommen: { mangelTyp: '', kategorie: '' },
+    maengel: { mangelTyp: 'Baumangel', kategorie: '' },
+    offen: { mangelTyp: 'Unfertige Leistung', kategorie: '' },
+    eigen: { mangelTyp: '', kategorie: '' }
+  };
+  const vorbelegung = typMap[typ] || {};
+  mangelEntwurf = neuerMangelEntwurf();
+  if (vorbelegung.mangelTyp) mangelEntwurf.mangelTyp = vorbelegung.mangelTyp;
+  zeigeTab('mangel');
+}
+
 function polygonZeichnenStarten(typ) {
   if (!uebersichtKarteInstanz) return;
   polygonModus = typ;
   polygonPunkte = [];
   if (polygonTempLayer) { uebersichtKarteInstanz.removeLayer(polygonTempLayer); polygonTempLayer = null; }
-  document.getElementById('polygonHinweis').style.display = 'block';
-  document.getElementById('polygonHinweis').textContent = `Modus: "${POLYGON_TYPEN[typ].label}" – Klicken zum Punkte setzen, Doppelklick zum Abschließen`;
-  document.getElementById('polygonAbbrBtn').style.display = '';
+  const h = document.getElementById('polygonHinweis');
+  if (h) { h.style.display = 'block'; h.innerHTML = `Modus: "<b>${POLYGON_TYPEN[typ].label}</b>" – Punkte klicken &nbsp; <button onclick="polygonFertigstellen()" class="btn btn-grau btn-sm" style="font-size:11px;padding:2px 8px">✓ Fertig</button>`; }
+  const b = document.getElementById('polygonAbbrBtn');
+  if (b) b.style.display = '';
   uebersichtKarteInstanz.getContainer().style.cursor = 'crosshair';
 }
 
@@ -1291,22 +1339,36 @@ function polygonZeichnenAbbrechen() {
   if (b) b.style.display = 'none';
 }
 
+let _letzterKlickTs = 0; // Doppelklick-Schutz
+
 // Klick auf Karte: Punkt hinzufügen
 function polygonKarteKlick(e) {
   if (!polygonModus) return;
+  const jetzt = Date.now();
+  // Doppelklick erzeugt zwei Klick-Events kurz hintereinander – zweiten ignorieren
+  if (jetzt - _letzterKlickTs < 350) return;
+  _letzterKlickTs = jetzt;
   polygonPunkte.push([e.latlng.lat, e.latlng.lng]);
-  // Temporäre Linie zeichnen
+  // Temporäre Linie/Polygon zeichnen
   if (polygonTempLayer) uebersichtKarteInstanz.removeLayer(polygonTempLayer);
-  if (polygonPunkte.length > 1) {
-    const farbe = POLYGON_TYPEN[polygonModus].farbe;
+  const farbe = POLYGON_TYPEN[polygonModus].farbe;
+  if (polygonPunkte.length > 2) {
+    polygonTempLayer = L.polygon(polygonPunkte, { color: farbe, fillColor: farbe, fillOpacity: 0.1, dashArray: '6,4', weight: 2 }).addTo(uebersichtKarteInstanz);
+  } else if (polygonPunkte.length > 1) {
     polygonTempLayer = L.polyline(polygonPunkte, { color: farbe, dashArray: '6,4', weight: 2 }).addTo(uebersichtKarteInstanz);
   }
   const h = document.getElementById('polygonHinweis');
-  if (h) h.textContent = `${polygonPunkte.length} Punkte gesetzt – Doppelklick zum Abschließen`;
+  if (h) h.innerHTML = `${polygonPunkte.length} Punkte gesetzt &nbsp; <button onclick="polygonFertigstellen()" class="btn btn-grau btn-sm" style="font-size:11px;padding:2px 8px">✓ Fertig (ab 3 Punkte)</button>`;
 }
 
-// Doppelklick: Polygon fertigstellen
+// Doppelklick: Polygon fertigstellen (alternative Methode)
 function polygonKarteDoppelklick(e) {
+  if (!polygonModus) return;
+  polygonFertigstellen();
+}
+
+// Polygon abschließen und speichern
+function polygonFertigstellen() {
   if (!polygonModus) return;
   if (polygonPunkte.length < 3) { meldung('Mindestens 3 Punkte nötig'); return; }
 
@@ -1330,6 +1392,7 @@ function polygonKarteDoppelklick(e) {
   if (polygonTempLayer) { uebersichtKarteInstanz.removeLayer(polygonTempLayer); polygonTempLayer = null; }
   polygonModus = null;
   polygonPunkte = [];
+  _letzterKlickTs = 0;
   uebersichtKarteInstanz.getContainer().style.cursor = '';
   const h = document.getElementById('polygonHinweis');
   if (h) h.style.display = 'none';
@@ -1479,10 +1542,10 @@ function zeichneAuswertung() {
       <!-- Polygon-Werkzeuge -->
       <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
         <span style="font-size:12px;font-weight:700;color:var(--schrift2)">Bereiche zeichnen:</span>
-        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('abgenommen')" style="border-left:3px solid #00843d">✓ Abgenommen</button>
-        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('maengel')" style="border-left:3px solid #e4001b">⚠ Mängel/Unfertig</button>
-        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('offen')" style="border-left:3px solid #e87722">⏳ Nicht abgenommen</button>
-        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('eigen')" style="border-left:3px solid #7c3aed">◈ Eigener Bereich</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonTypAuswaehlen('abgenommen')" style="border-left:3px solid #00843d">✓ Abgenommen</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonTypAuswaehlen('maengel')" style="border-left:3px solid #e4001b">⚠ Mängel/Unfertig</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonTypAuswaehlen('offen')" style="border-left:3px solid #e87722">⏳ Nicht abgenommen</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonTypAuswaehlen('eigen')" style="border-left:3px solid #7c3aed">◈ Eigener Bereich</button>
         <button class="btn btn-grau btn-sm" onclick="polygonZeichnenAbbrechen()" id="polygonAbbrBtn" style="display:none">✕ Abbrechen</button>
       </div>
       <div id="polygonHinweis" style="display:none;font-size:12px;color:var(--wn-orange);font-weight:600;padding:6px 0">Klicke auf die Karte um Punkte zu setzen. Doppelklick zum Abschließen.</div>
