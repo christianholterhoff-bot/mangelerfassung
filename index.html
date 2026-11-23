@@ -521,17 +521,25 @@ function zeichneMangel() {
     <div class="karte">
       <h3>Standort</h3>
       <label>Straße / Bezeichnung</label>
-      <input type="text" placeholder="z.B. Hauptstraße 12" value="${esc(m.strasse)}" oninput="mangelEntwurf.strasse=this.value">
+      <input type="text" id="eingabeStrasse" placeholder="z.B. Hauptstraße 12" value="${esc(m.strasse)}" oninput="mangelEntwurf.strasse=this.value">
       <label>Ort / Ortsteil</label>
-      <input type="text" placeholder="z.B. Bestwig-Heringhausen" value="${esc(m.ort)}" oninput="mangelEntwurf.ort=this.value">
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button class="btn btn-grau btn-sm" onclick="karteOeffnenOderGPS()" style="flex:1">
+      <input type="text" id="eingabeOrt" placeholder="z.B. Bestwig-Heringhausen" value="${esc(m.ort)}" oninput="mangelEntwurf.ort=this.value">
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-blau btn-sm" onclick="gpsErmitteln()" style="flex:1">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
-          GPS / Karte öffnen
+          GPS ermitteln
         </button>
-        ${m.lat?`<button class="btn btn-grau btn-sm" onclick="mangelEntwurf.lat=null;mangelEntwurf.lng=null;if(karteInstanz){karteInstanz.remove();karteInstanz=null;}zeichneMangel()">GPS löschen</button>`:''}
+        <button class="btn btn-grau btn-sm" onclick="adresseAufKarteSuchen()" style="flex:1">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Adresse suchen
+        </button>
       </div>
-      ${m.lat?`<div class="gps-info">GPS gesetzt: ${m.lat}, ${m.lng}</div>`:'<div class="gps-info">Kein GPS gesetzt – Karte antippen oder GPS nutzen</div>'}
+      ${m.lat
+        ? `<div class="gps-info" style="display:flex;justify-content:space-between;align-items:center">
+            <span>📍 ${m.lat}, ${m.lng}</span>
+            <button class="btn btn-grau btn-sm" style="padding:2px 10px;font-size:12px" onclick="mangelEntwurf.lat=null;mangelEntwurf.lng=null;if(karteInstanz){karteInstanz.remove();karteInstanz=null;document.getElementById('karteWahl').style.display='none';}zeichneMangel()">Löschen</button>
+           </div>`
+        : `<div class="gps-info">Noch kein Standort – GPS oder Adresse suchen, dann erscheint die Karte</div>`}
       <div id="karteWahl"></div>
     </div>
 
@@ -564,29 +572,53 @@ function zeichneMangel() {
   if (m.lat) setTimeout(() => karteInitiieren(), 100);
 }
 
-// GPS und Karte
-function karteOeffnenOderGPS() {
-  if (navigator.geolocation) {
-    meldung('GPS wird ermittelt…');
-    navigator.geolocation.getCurrentPosition(async pos => {
-      mangelEntwurf.lat = parseFloat(pos.coords.latitude.toFixed(6));
-      mangelEntwurf.lng = parseFloat(pos.coords.longitude.toFixed(6));
-      // Adresse automatisch befüllen
-      const geo = await reverseGeocode(mangelEntwurf.lat, mangelEntwurf.lng);
-      if (geo) {
-        if (!mangelEntwurf.strasse && geo.strasse) mangelEntwurf.strasse = geo.strasse;
-        if (!mangelEntwurf.ort && geo.ort) mangelEntwurf.ort = geo.ort;
-      }
-      zeichneMangel();
-      setTimeout(() => karteInitiieren(), 100);
-    }, () => {
-      meldung('GPS nicht verfügbar – Karte wird geöffnet');
-      karteInitiierenOhnePunkt();
-    }, { enableHighAccuracy: true, timeout: 8000 });
-  } else {
-    karteInitiierenOhnePunkt();
+// GPS: Position per Gerät ermitteln und Adresse eintragen
+function gpsErmitteln() {
+  if (!navigator.geolocation) { meldung('GPS nicht verfügbar'); return; }
+  meldung('GPS wird ermittelt…');
+  navigator.geolocation.getCurrentPosition(async pos => {
+    mangelEntwurf.lat = parseFloat(pos.coords.latitude.toFixed(6));
+    mangelEntwurf.lng = parseFloat(pos.coords.longitude.toFixed(6));
+    // Adresse automatisch eintragen
+    const geo = await reverseGeocode(mangelEntwurf.lat, mangelEntwurf.lng);
+    if (geo) {
+      mangelEntwurf.strasse = geo.strasse;
+      mangelEntwurf.ort = geo.ort;
+    }
+    zeichneMangel();
+    setTimeout(() => karteInitiieren(), 100);
+  }, () => {
+    meldung('GPS nicht verfügbar – bitte manuell eingeben');
+  }, { enableHighAccuracy: true, timeout: 10000 });
+}
+
+// Adresssuche: eingegebene Adresse geocodieren und auf Karte zeigen
+async function adresseAufKarteSuchen() {
+  const strasse = mangelEntwurf.strasse || document.getElementById('eingabeStrasse')?.value || '';
+  const ort = mangelEntwurf.ort || document.getElementById('eingabeOrt')?.value || '';
+  const sucheText = [strasse, ort].filter(Boolean).join(', ');
+  if (!sucheText.trim()) { meldung('Bitte zuerst Straße oder Ort eingeben'); return; }
+  meldung('Adresse wird gesucht…');
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(sucheText)}&format=json&limit=1&addressdetails=1`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'de', 'User-Agent': 'MangelerfassungApp/1.0' } });
+    const data = await res.json();
+    if (!data.length) { meldung('Adresse nicht gefunden – Karte offen zum Manuell-Setzen'); karteInitiierenOhnePunkt(); return; }
+    mangelEntwurf.lat = parseFloat(parseFloat(data[0].lat).toFixed(6));
+    mangelEntwurf.lng = parseFloat(parseFloat(data[0].lon).toFixed(6));
+    // Felder aktualisieren falls leer
+    const a = data[0].address || {};
+    if (!mangelEntwurf.strasse) mangelEntwurf.strasse = [a.road, a.house_number].filter(Boolean).join(' ');
+    if (!mangelEntwurf.ort) mangelEntwurf.ort = a.village || a.suburb || a.town || a.city || '';
+    zeichneMangel();
+    setTimeout(() => karteInitiieren(), 100);
+  } catch(e) {
+    meldung('Suche fehlgeschlagen – bitte GPS oder Karte nutzen');
   }
 }
+
+// Rückwärts-Kompatibilität: alter Aufruf
+function karteOeffnenOderGPS() { gpsErmitteln(); }
 
 function karteInitiieren() {
   const el = document.getElementById('karteWahl');
