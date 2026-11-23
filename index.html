@@ -496,6 +496,43 @@ function zeichneMangel() {
       </div>
       ${mangelEntwurf.mangelPolygon ? `<div style="margin-top:10px;font-size:13px;color:var(--wn-gruen);font-weight:600">✓ Polygon mit ${mangelEntwurf.mangelPolygon.length} Punkten gespeichert</div>` : ''}
     </div>` : ''}
+    <div class="karte">
+      <h3>Standort</h3>
+      ${m.mangelPolygon ? `
+      <div id="mangelPolygonZeichenKarte" style="height:280px;border-radius:var(--radius-s);border:2px solid var(--wn-blau);margin-bottom:10px"></div>
+      <div id="mangelPolygonHinweis" style="font-size:12px;color:var(--text-grau);margin-bottom:8px">Tippe auf die Karte um Punkte zu setzen. Mindestens 3 Punkte, dann "Fertig".</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-grau btn-sm" style="flex:1" onclick="mangelPolygonPunktLoeschen()">↩ Letzten Punkt löschen</button>
+        <button class="btn btn-blau btn-sm" style="flex:1" onclick="mangelPolygonFertig()">✓ Polygon fertig</button>
+        <button class="btn btn-grau btn-sm" style="flex:1" onclick="mangelPolygonModeDeaktivieren()">✕ Abbrechen</button>
+      </div>
+      <div style="margin-top:10px">
+        <label>Adresse / Bezeichnung (optional)</label>
+        <input type="text" id="eingabeStrasse" placeholder="z.B. Hauptstraße 12" value="${esc(m.strasse)}" oninput="mangelEntwurf.strasse=this.value">
+        <input type="text" id="eingabeOrt" placeholder="z.B. Bestwig-Heringhausen" style="margin-top:6px" value="${esc(m.ort)}" oninput="mangelEntwurf.ort=this.value">
+      </div>` : `
+      <label>Straße / Bezeichnung</label>
+      <input type="text" id="eingabeStrasse" placeholder="z.B. Hauptstraße 12" value="${esc(m.strasse)}" oninput="mangelEntwurf.strasse=this.value">
+      <label>Ort / Ortsteil</label>
+      <input type="text" id="eingabeOrt" placeholder="z.B. Bestwig-Heringhausen" value="${esc(m.ort)}" oninput="mangelEntwurf.ort=this.value">
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-blau btn-sm" onclick="gpsErmitteln()" style="flex:1">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
+          GPS ermitteln
+        </button>
+        <button class="btn btn-grau btn-sm" onclick="adresseAufKarteSuchen()" style="flex:1">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Adresse suchen
+        </button>
+      </div>
+      ${m.lat
+        ? `<div class="gps-info" style="display:flex;justify-content:space-between;align-items:center">
+            <span>📍 ${m.lat}, ${m.lng}</span>
+            <button class="btn btn-grau btn-sm" style="padding:2px 10px;font-size:12px" onclick="mangelEntwurf.lat=null;mangelEntwurf.lng=null;if(karteInstanz){karteInstanz.remove();karteInstanz=null;document.getElementById('karteWahl').style.display='none';}zeichneMangel()">Löschen</button>
+           </div>`
+        : `<div class="gps-info">Noch kein Standort – GPS oder Adresse suchen, dann erscheint die Karte</div>`}
+      <div id="karteWahl"></div>`}
+    </div>
 
     <div class="karte">
       <h3>Art des Mangels</h3>
@@ -561,43 +598,6 @@ function zeichneMangel() {
       <textarea placeholder="Zusätzliche Beschreibung des Mangels (optional)…" oninput="mangelEntwurf.kommentar=this.value">${esc(m.kommentar)}</textarea>
     </div>
 
-    <div class="karte">
-      <h3>Standort</h3>
-      ${m.mangelPolygon ? `
-      <div id="mangelPolygonZeichenKarte" style="height:280px;border-radius:var(--radius-s);border:2px solid var(--wn-blau);margin-bottom:10px"></div>
-      <div id="mangelPolygonHinweis" style="font-size:12px;color:var(--text-grau);margin-bottom:8px">Tippe auf die Karte um Punkte zu setzen. Mindestens 3 Punkte, dann "Fertig".</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-grau btn-sm" style="flex:1" onclick="mangelPolygonPunktLoeschen()">↩ Letzten Punkt löschen</button>
-        <button class="btn btn-blau btn-sm" style="flex:1" onclick="mangelPolygonFertig()">✓ Polygon fertig</button>
-        <button class="btn btn-grau btn-sm" style="flex:1" onclick="mangelPolygonModeDeaktivieren()">✕ Abbrechen</button>
-      </div>
-      <div style="margin-top:10px">
-        <label>Adresse / Bezeichnung (optional)</label>
-        <input type="text" id="eingabeStrasse" placeholder="z.B. Hauptstraße 12" value="${esc(m.strasse)}" oninput="mangelEntwurf.strasse=this.value">
-        <input type="text" id="eingabeOrt" placeholder="z.B. Bestwig-Heringhausen" style="margin-top:6px" value="${esc(m.ort)}" oninput="mangelEntwurf.ort=this.value">
-      </div>` : `
-      <label>Straße / Bezeichnung</label>
-      <input type="text" id="eingabeStrasse" placeholder="z.B. Hauptstraße 12" value="${esc(m.strasse)}" oninput="mangelEntwurf.strasse=this.value">
-      <label>Ort / Ortsteil</label>
-      <input type="text" id="eingabeOrt" placeholder="z.B. Bestwig-Heringhausen" value="${esc(m.ort)}" oninput="mangelEntwurf.ort=this.value">
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn btn-blau btn-sm" onclick="gpsErmitteln()" style="flex:1">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
-          GPS ermitteln
-        </button>
-        <button class="btn btn-grau btn-sm" onclick="adresseAufKarteSuchen()" style="flex:1">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Adresse suchen
-        </button>
-      </div>
-      ${m.lat
-        ? `<div class="gps-info" style="display:flex;justify-content:space-between;align-items:center">
-            <span>📍 ${m.lat}, ${m.lng}</span>
-            <button class="btn btn-grau btn-sm" style="padding:2px 10px;font-size:12px" onclick="mangelEntwurf.lat=null;mangelEntwurf.lng=null;if(karteInstanz){karteInstanz.remove();karteInstanz=null;document.getElementById('karteWahl').style.display='none';}zeichneMangel()">Löschen</button>
-           </div>`
-        : `<div class="gps-info">Noch kein Standort – GPS oder Adresse suchen, dann erscheint die Karte</div>`}
-      <div id="karteWahl"></div>`}
-    </div>
 
     <div class="karte">
       <h3>Fotos</h3>
