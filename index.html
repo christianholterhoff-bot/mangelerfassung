@@ -299,6 +299,7 @@ let polygonTempLayer = null; // temporäre Linie beim Zeichnen
 let polygonLayer = null; // Leaflet LayerGroup für alle Polygone
 let polygonListe = []; // alle gespeicherten Polygone (lokal)
 let meldungTimer = null;
+let snapshotDebounceTimer = null; // Doppel-Update-Schutz
 
 // Mängel Entwurf
 function neuerMangelEntwurf() {
@@ -419,15 +420,28 @@ async function stammdatenSpeichern() {
 function echtzeitStarten() {
   if (echtzeitAbmelden) echtzeitAbmelden();
   echtzeitAbmelden = db.collection(COL).onSnapshot(snap => {
+    // Nur mangelindex-Dokumente auswerten
     const neueIndex = [];
     snap.docs.forEach(d => {
       if (d.id.startsWith('mangelindex:')) neueIndex.push(d.data());
     });
-    if (neueIndex.length || snap.docs.some(d => d.id.startsWith('mangelindex:'))) {
-      mangelIndex = neueIndex.sort((a, b) => (b.gespeichertAm||'').localeCompare(a.gespeichertAm||''));
-      zeichneAktuellenTab();
+    // Stammdaten aktualisieren falls vorhanden
+    const stammdatenDoc = snap.docs.find(d => d.id === 'stammdaten_maengel');
+    if (stammdatenDoc) {
+      const sd = stammdatenDoc.data();
+      if (sd.firmen) stammdaten.firmen = sd.firmen;
+      if (sd.bearbeiter) stammdaten.bearbeiter = sd.bearbeiter;
+      if (sd.kategorien) stammdaten.kategorien = sd.kategorien;
+      if (sd.massnahmen) stammdaten.massnahmen = sd.massnahmen;
     }
+    mangelIndex = neueIndex.sort((a, b) => (b.gespeichertAm||'').localeCompare(a.gespeichertAm||''));
     document.getElementById('online-punkt').style.background = '#4ade80';
+    // Debounce: mehrere schnelle Firestore-Writes (z.B. mangel + mangelindex) nur einmal rendern
+    if (snapshotDebounceTimer) clearTimeout(snapshotDebounceTimer);
+    snapshotDebounceTimer = setTimeout(() => {
+      snapshotDebounceTimer = null;
+      zeichneAktuellenTab();
+    }, 300);
   }, () => {
     document.getElementById('online-punkt').style.background = '#f87171';
   });
@@ -461,6 +475,18 @@ function zeichneMangel() {
   document.getElementById('app').innerHTML = `
     <h2 style="font-size:18px;font-weight:800;margin-bottom:14px;color:var(--wn-blau)">${bearbeitenModus ? 'Mangel bearbeiten' : 'Neuer Mangel erfassen'}</h2>
     ${bearbeitenModus ? `<div style="background:var(--wn-orange);color:#fff;padding:8px 12px;border-radius:var(--radius-s);font-size:13px;font-weight:600;margin-bottom:12px">Bearbeitungsmodus – Änderungen werden geloggt</div>` : ''}
+
+    ${!bearbeitenModus ? `<div class="karte" style="margin-bottom:12px">
+      <h3 style="margin-bottom:10px">Erfassungsart</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-blau" style="flex:1;min-width:140px;text-align:left;padding:12px 14px" onclick="">
+          📍&nbsp; Einzelner Mangel (punktuell)
+        </button>
+        <button class="btn btn-grau" style="flex:1;min-width:140px;text-align:left;padding:12px 14px" onclick="zeigePolygonAuswahlImNeu()">
+          ◻&nbsp; Bereich als Polygon
+        </button>
+      </div>
+    </div>` : ''}
 
     <div class="karte">
       <h3>Art des Mangels</h3>
@@ -1068,10 +1094,10 @@ function mangelKarteHtml(e) {
         ${e.mangelTyp?`<span class="mangel-typ-badge ${e.mangelTyp==='Baumangel'?'mangel-typ-baumangel':'mangel-typ-unfertig'}">${esc(e.mangelTyp)}</span>`:''}
       </div>
       <div class="mangel-kategorie">${esc(e.kategorie||'ohne Kategorie')}</div>
+      ${(e.strasse||e.ort)?`<div style="font-size:12px;color:var(--text-haupt);margin:3px 0 2px 0;font-weight:500">📍 ${[e.strasse,e.ort].filter(Boolean).map(esc).join(', ')}</div>`:''}
       <div class="mangel-meta">
         ${esc(e.firma||'ohne Firma')}${e.subunternehmer&&!e.keinSubunternehmer?', Sub: '+esc(e.subunternehmer):''}
         <br>${datumSchoen(e.datum)}${zeitSchoen(e.gespeichertAm)?', '+zeitSchoen(e.gespeichertAm)+' Uhr':''}
-        ${e.ort?' · '+esc(e.ort):''}
         ${e.eintrager?'<br>'+esc(e.eintrager):''}
         ${e.fotoAnzahl?' · '+e.fotoAnzahl+' Foto(s)':''}
       </div>
@@ -1315,6 +1341,21 @@ function mangelMitTypStarten(typ) {
   zeigeTab('mangel');
 }
 
+// Modal im Neu-Tab: Polygon-Typ wählen, dann zur Übersicht wechseln und zeichnen
+function zeigePolygonAuswahlImNeu() {
+  zeigeAuswahlModal(`<div class="dialog-box">
+    <h3 style="margin-bottom:14px">Bereich als Polygon erfassen</h3>
+    <p style="font-size:13px;color:var(--text-grau);margin-bottom:14px">Welche Art von Bereich möchtest du einzeichnen?</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${Object.entries(POLYGON_TYPEN).map(([k,v])=>`
+      <button onclick="schliesseAuswahlModal();zeigeTab('auswertung');setTimeout(()=>polygonZeichnenStarten('${k}'),600)" class="btn btn-grau" style="width:100%;padding:12px;font-size:14px;text-align:left;border-left:3px solid ${v.farbe}">
+        ${v.label}
+      </button>`).join('')}
+      <button onclick="schliesseAuswahlModal()" class="btn btn-grau" style="width:100%;padding:8px;font-size:13px">Abbrechen</button>
+    </div>
+  </div>`);
+}
+
 function polygonZeichnenStarten(typ) {
   if (!uebersichtKarteInstanz) return;
   polygonModus = typ;
@@ -1542,10 +1583,10 @@ function zeichneAuswertung() {
       <!-- Polygon-Werkzeuge -->
       <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
         <span style="font-size:12px;font-weight:700;color:var(--schrift2)">Bereiche zeichnen:</span>
-        <button class="btn btn-grau btn-sm" onclick="polygonTypAuswaehlen('abgenommen')" style="border-left:3px solid #00843d">✓ Abgenommen</button>
-        <button class="btn btn-grau btn-sm" onclick="polygonTypAuswaehlen('maengel')" style="border-left:3px solid #e4001b">⚠ Mängel/Unfertig</button>
-        <button class="btn btn-grau btn-sm" onclick="polygonTypAuswaehlen('offen')" style="border-left:3px solid #e87722">⏳ Nicht abgenommen</button>
-        <button class="btn btn-grau btn-sm" onclick="polygonTypAuswaehlen('eigen')" style="border-left:3px solid #7c3aed">◈ Eigener Bereich</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('abgenommen')" style="border-left:3px solid #00843d">✓ Abgenommen</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('maengel')" style="border-left:3px solid #e4001b">⚠ Mängel/Unfertig</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('offen')" style="border-left:3px solid #e87722">⏳ Nicht abgenommen</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('eigen')" style="border-left:3px solid #7c3aed">◈ Eigener Bereich</button>
         <button class="btn btn-grau btn-sm" onclick="polygonZeichnenAbbrechen()" id="polygonAbbrBtn" style="display:none">✕ Abbrechen</button>
       </div>
       <div id="polygonHinweis" style="display:none;font-size:12px;color:var(--wn-orange);font-weight:600;padding:6px 0">Klicke auf die Karte um Punkte zu setzen. Doppelklick zum Abschließen.</div>
