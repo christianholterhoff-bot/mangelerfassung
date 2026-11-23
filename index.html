@@ -1109,7 +1109,7 @@ function zeichneAuswertung() {
 
     <!-- Große Karte mit allen Mängeln -->
     <div class="karte">
-      <h3>Karte – Alle Mängel (${mangelIndex.filter(e=>e.lat).length} mit GPS)</h3>
+      <h3>Karte – Alle Mängel (${mangelIndex.filter(e=>e.lat).length} mit GPS · ${mangelIndex.filter(e=>!e.lat&&(e.strasse||e.ort)).length} per Adresse)</h3>
       <div id="uebersichtKarte"></div>
       <div class="legende-reihe" style="margin-top:10px">
         ${aktiveKat.map(k=>`<div class="legende-item"><div class="legende-dot" style="background:${MANGEL_FARBEN[k]||'#003976'}"></div>${esc(k)}</div>`).join('')}
@@ -1178,33 +1178,58 @@ function zeichneAuswertung() {
       </div>`).join('')}
     </div>`:''}`;
 
-  // Karte initiieren
-  setTimeout(() => {
+  // Karte initiieren mit GPS-Punkten und Adress-Geocodierung
+  setTimeout(async () => {
     const el = document.getElementById('uebersichtKarte');
     if (!el || typeof L === 'undefined') return;
     if (uebersichtKarteInstanz) { uebersichtKarteInstanz.remove(); uebersichtKarteInstanz = null; }
-    // Mittelpunkt NRW / Sauerland als Fallback
     uebersichtKarteInstanz = L.map('uebersichtKarte').setView([51.4, 8.0], 11);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:'© OpenStreetMap', maxZoom:19
     }).addTo(uebersichtKarteInstanz);
 
-    const mitGPS = mangelIndex.filter(e => e.lat && e.lng);
     const bounds = [];
-    mitGPS.forEach(e => {
+
+    // Hilfsfunktion: Marker auf Karte setzen
+    function setzeMarker(e, lat, lng, perAdresse) {
       const farbe = MANGEL_FARBEN[e.kategorie] || '#003976';
       const r = e.kritisch ? 10 : 7;
-      const marker = L.circleMarker([e.lat, e.lng], {
-        radius:r, color:'#fff', weight:1.5,
-        fillColor:farbe, fillOpacity:e.behoben?0.4:0.9
+      // GPS-Punkte: volle Farbe, Adress-Punkte: gestrichelt
+      const marker = L.circleMarker([lat, lng], {
+        radius: r,
+        color: perAdresse ? farbe : '#fff',
+        weight: perAdresse ? 2 : 1.5,
+        dashArray: perAdresse ? '4,3' : null,
+        fillColor: farbe,
+        fillOpacity: e.behoben ? 0.3 : (perAdresse ? 0.6 : 0.9)
       }).addTo(uebersichtKarteInstanz);
-      marker.bindPopup(`<b>${esc(e.kategorie||'Mangel')}</b><br>${esc(e.projekt||'')}${e.ort?' · '+esc(e.ort):''}${e.behoben?' · <span style="color:#00843d">Behoben</span>':e.kritisch?' · <span style="color:#e4001b">KRITISCH</span>':''}`);
-      bounds.push([e.lat, e.lng]);
-    });
-    if (bounds.length > 0) {
+      const typ = perAdresse ? ' · Adresse' : ' · GPS';
+      marker.bindPopup(`<b>${esc(e.kategorie||'Mangel')}</b><br>${esc(e.projekt||'')}${e.ort?' · '+esc(e.ort):''}${typ}${e.behoben?' · <span style="color:#00843d">Behoben</span>':e.kritisch?' · <span style="color:#e4001b">KRITISCH</span>':''}`);
+      bounds.push([lat, lng]);
+    }
+
+    // Erst alle mit GPS setzen
+    mangelIndex.filter(e => e.lat && e.lng).forEach(e => setzeMarker(e, e.lat, e.lng, false));
+
+    // Dann Mängel ohne GPS aber mit Adresse geocodieren (max 10 auf einmal, Nominatim-Limit)
+    const ohneGPS = mangelIndex.filter(e => !e.lat && (e.strasse || e.ort));
+    const geocodeQueue = ohneGPS.slice(0, 10);
+    for (const e of geocodeQueue) {
+      try {
+        const q = [e.strasse, e.ort].filter(Boolean).join(', ');
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1`, { headers:{'Accept-Language':'de'} });
+        const data = await res.json();
+        if (data.length && uebersichtKarteInstanz) {
+          setzeMarker(e, parseFloat(data[0].lat), parseFloat(data[0].lon), true);
+        }
+        await new Promise(r => setTimeout(r, 300)); // Nominatim Pause
+      } catch(err) { /* Geocodierung fehlgeschlagen, Punkt wird übersprungen */ }
+    }
+
+    if (bounds.length > 0 && uebersichtKarteInstanz) {
       uebersichtKarteInstanz.fitBounds(bounds, { padding:[30,30] });
     }
-    setTimeout(() => uebersichtKarteInstanz.invalidateSize(), 200);
+    setTimeout(() => uebersichtKarteInstanz && uebersichtKarteInstanz.invalidateSize(), 200);
   }, 60);
 }
 
