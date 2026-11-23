@@ -2,9 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Mängelerfassung Insolvenz</title>
-<meta name="theme-color" content="#003976">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Mängelerfassung – Westnetz GmbH</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-app-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.0/firebase-firestore-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -12,399 +11,250 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* Leaflet CSS inline */
-.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}.leaflet-container{overflow:hidden}.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none}.leaflet-tile::selection{background:transparent}.leaflet-safari .leaflet-tile{image-rendering:crisp-edges}.leaflet-safari .leaflet-tile-container{width:1600px;height:1600px;-webkit-transform-origin:0 0}.leaflet-marker-icon,.leaflet-marker-shadow{display:block}.leaflet-container .leaflet-overlay-pane svg{max-width:none!important;max-height:none!important}.leaflet-container.leaflet-touch-zoom{-ms-touch-action:pan-x pan-y;touch-action:pan-x pan-y}.leaflet-container.leaflet-touch-drag{-ms-touch-action:pinch-zoom;touch-action:none;touch-action:pinch-zoom}.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{-ms-touch-action:none;touch-action:none}.leaflet-container{-webkit-tap-highlight-color:transparent}.leaflet-container a{-webkit-tap-highlight-color:rgba(51,181,229,.4)}.leaflet-tile{filter:inherit;visibility:hidden}.leaflet-tile-loaded{visibility:inherit}.leaflet-zoom-box{width:0;height:0;-moz-box-sizing:border-box;box-sizing:border-box;z-index:800}.leaflet-overlay-pane svg{-moz-user-select:none}.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}.leaflet-vml-shape{width:1px;height:1px}.lvml{behavior:url(#default#VML);display:inline-block;position:absolute}.leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto}.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-control{float:left;clear:both}.leaflet-right .leaflet-control{float:right}.leaflet-top .leaflet-control{margin-top:10px}.leaflet-bottom .leaflet-control{margin-bottom:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{margin-right:10px}.leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity .2s linear;-moz-transition:opacity .2s linear;transition:opacity .2s linear}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1}.leaflet-zoom-animated{-webkit-transform-origin:0 0;-ms-transform-origin:0 0;transform-origin:0 0}.leaflet-zoom-anim .leaflet-zoom-animated{will-change:transform}.leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform .25s cubic-bezier(0,0,.25,1);-moz-transition:-moz-transform .25s cubic-bezier(0,0,.25,1);transition:transform .25s cubic-bezier(0,0,.25,1)}.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none}.leaflet-zoom-anim .leaflet-zoom-animated.leaflet-zoom-hide{visibility:hidden}.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair}.leaflet-popup-pane,.leaflet-control{cursor:auto}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}.leaflet-marker-icon.leaflet-interactive,.leaflet-image-layer.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto}.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-left:-20px;overflow:hidden;pointer-events:none}.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#fff;color:#333;box-shadow:0 3px 14px rgba(0,0,0,.4)}.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:transparent}.leaflet-container a.leaflet-popup-close-button:hover,.leaflet-container a.leaflet-popup-close-button:focus{color:#585858}.leaflet-popup-scrolled{overflow:auto}.leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;word-break:normal}.leaflet-popup-content p{margin:17px 0 11px}.leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.4)}.leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto}.leaflet-control-zoom-in,.leaflet-control-zoom-out,.leaflet-control-layers-toggle{display:block;text-decoration:none}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,.65);border-radius:4px}.leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:#444}.leaflet-bar a:hover,.leaflet-bar a:focus{background-color:#f4f4f4}.leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px}.leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none}.leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb}.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px}.leaflet-control-zoom-in{font:bold 18px "Lucida Console",Monaco,monospace;text-indent:1px}.leaflet-control-zoom-out{font:bold 18px "Lucida Console",Monaco,monospace;text-indent:1px}.leaflet-touch .leaflet-control-zoom-in{font-size:22px}.leaflet-touch .leaflet-control-zoom-out{font-size:20px}.leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,.4);background:#fff;border-radius:5px}.leaflet-control-layers-list{display:none}.leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative}.leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff}.leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px}.leaflet-control-layers label{display:block;font-size:13px}.leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px}.leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,.8);margin:0}.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;font-size:11px}.leaflet-left .leaflet-control-scale{margin-left:5px}.leaflet-bottom .leaflet-control-scale{margin-bottom:5px}.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;font-size:11px;white-space:nowrap;overflow:hidden;box-sizing:border-box;background:#fff;background:rgba(255,255,255,.5)}.leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-control-zoom{box-shadow:none}.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-control-zoom{border:2px solid rgba(0,0,0,.2);background-clip:padding-box}.leaflet-popup-scrolled{overflow:auto;border-bottom:1px solid #ddd;border-top:1px solid #ddd}
-</style>
-<style>
-  /* Westnetz Farbsystem */
-  :root{
-    --wn-blau:#003976;
-    --wn-blau-hell:#0057a8;
-    --wn-blau-mittel:#1a5fa8;
-    --wn-akzent:#e4001b;
-    --wn-gruen:#00843d;
-    --wn-orange:#e87722;
-    --wn-grau:#6e7275;
-    --wn-grau-hell:#f4f5f6;
-    --wn-grau-rand:#d0d3d4;
-    --bg:#f4f5f6;
-    --karte:#ffffff;
-    --linie:#d0d3d4;
-    --schrift:#1a1a1a;
-    --schrift2:#6e7275;
-    --radius:12px;
-    --radius-s:7px;
-  }
-  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent}
-  html,body{height:100%; background:var(--bg); color:var(--schrift); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif; font-size:16px}
-  body{display:flex; flex-direction:column; overflow:hidden}
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}.leaflet-container{overflow:hidden}.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow{-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-user-drag:none}.leaflet-tile::selection{background:transparent}.leaflet-safari .leaflet-tile{image-rendering:crisp-edges}.leaflet-layer{z-index:1}.leaflet-container .leaflet-overlay-pane{z-index:4}.leaflet-container .leaflet-shadow-pane{z-index:5}.leaflet-container .leaflet-marker-pane{z-index:6}.leaflet-container .leaflet-tooltip-pane{z-index:650}.leaflet-container .leaflet-popup-pane{z-index:700}.leaflet-map-pane canvas{z-index:1}.leaflet-map-pane svg{z-index:2}.leaflet-vml-shape{width:1px;height:1px}.lvml{behavior:url(#default#VML);display:inline-block;position:absolute}.leaflet-control{position:relative;z-index:800;pointer-events:visiblePainted;pointer-events:auto}.leaflet-bottom,.leaflet-top{position:absolute;z-index:1000;pointer-events:none}.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}.leaflet-control{float:left;clear:both}.leaflet-right .leaflet-control{float:right}.leaflet-top .leaflet-control{margin-top:10px}.leaflet-bottom .leaflet-control{margin-bottom:10px}.leaflet-left .leaflet-control{margin-left:10px}.leaflet-right .leaflet-control{margin-right:10px}.leaflet-fade-anim .leaflet-popup{opacity:0;-webkit-transition:opacity .2s linear;-moz-transition:opacity .2s linear;transition:opacity .2s linear}.leaflet-fade-anim .leaflet-map-pane .leaflet-popup{opacity:1}.leaflet-zoom-animated{-webkit-transform-origin:left top;-ms-transform-origin:left top;transform-origin:left top}.leaflet-zoom-animated{will-change:transform}.leaflet-zoom-anim .leaflet-zoom-animated{-webkit-transition:-webkit-transform .25s cubic-bezier(0,0,.25,1);-moz-transition:-moz-transform .25s cubic-bezier(0,0,.25,1);transition:transform .25s cubic-bezier(0,0,.25,1)}.leaflet-zoom-anim .leaflet-tile,.leaflet-pan-anim .leaflet-tile{-webkit-transition:none;-moz-transition:none;transition:none}.leaflet-zoom-anim .leaflet-zoom-animated.leaflet-zoom-hide{visibility:hidden}.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:-webkit-grab;cursor:-moz-grab;cursor:grab}.leaflet-crosshair,.leaflet-crosshair .leaflet-interactive{cursor:crosshair}.leaflet-popup-pane,.leaflet-control{cursor:auto}.leaflet-dragging .leaflet-grab,.leaflet-dragging .leaflet-grab .leaflet-interactive,.leaflet-dragging .leaflet-marker-draggable{cursor:move;cursor:-webkit-grabbing;cursor:-moz-grabbing;cursor:grabbing}.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-image-layer,.leaflet-pane>svg path,.leaflet-tile-container{pointer-events:none}.leaflet-marker-icon.leaflet-interactive,.leaflet-image-layer.leaflet-interactive,.leaflet-pane>svg path.leaflet-interactive,svg.leaflet-image-layer.leaflet-interactive path{pointer-events:visiblePainted;pointer-events:auto}.leaflet-container{-webkit-tap-highlight-color:transparent;background:#ddd;outline-offset:1px}.leaflet-container a{color:#0078a8}.leaflet-container a.leaflet-active{outline:2px solid orange}.leaflet-zoom-box{border:2px dotted #38f;background:rgba(255,255,255,.5)}.leaflet-container{font-family:Helvetica Neue,Arial,Helvetica,sans-serif;font-size:.75rem;font-size:12px;line-height:1.5}.leaflet-bar{box-shadow:0 1px 5px rgba(0,0,0,.65);border-radius:4px}.leaflet-bar a{background-color:#fff;border-bottom:1px solid #ccc;width:26px;height:26px;line-height:26px;display:block;text-align:center;text-decoration:none;color:black}.leaflet-bar a,.leaflet-control-layers-toggle{background-position:50% 50%;background-repeat:no-repeat;display:block}.leaflet-bar a:hover,.leaflet-bar a:focus{background-color:#f4f4f4}.leaflet-bar a:first-child{border-top-left-radius:4px;border-top-right-radius:4px}.leaflet-bar a:last-child{border-bottom-left-radius:4px;border-bottom-right-radius:4px;border-bottom:none}.leaflet-bar a.leaflet-disabled{cursor:default;background-color:#f4f4f4;color:#bbb}.leaflet-touch .leaflet-bar a{width:30px;height:30px;line-height:30px}.leaflet-touch .leaflet-bar a:first-child{border-top-left-radius:2px;border-top-right-radius:2px}.leaflet-touch .leaflet-bar a:last-child{border-bottom-left-radius:2px;border-bottom-right-radius:2px}.leaflet-control-zoom-in,.leaflet-control-zoom-out{font:bold 18px 'Lucida Console',Monaco,monospace;text-indent:1px}.leaflet-touch .leaflet-control-zoom-in,.leaflet-touch .leaflet-control-zoom-out{font-size:22px}.leaflet-control-layers{box-shadow:0 1px 5px rgba(0,0,0,.4);background:#fff;border-radius:5px}.leaflet-control-layers-toggle{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAQAAAADQ4RFAAACf0lEQVR4AY1UM3gkARTd2a5s27Zt27Zt27Zt27Zt27YZU1Q9d1J1LsffVPEBVGtKy+Bpas0HqtXK5b2+9q29t/WV37yt37e9f7q+t7q+d7u+vry+urm+uLm0YDGABwRBweNU6pQK3EhH9lfKPEF+OirHEJ+Owl8kThC+KMQR5F1BWFEiFZBzx8IRT5k4RdmSs0ZRs0RcFnJY5EiRI2YpuaI0I+ePkf+VHCqnXFXHHblSxfllCw+XNGyocT6uoXJeEgC5niYhBEA2+KDVS6CBCjq04h+wTsq5oLYNOK7QJBatRBu9AQiAFBVr/BurJD0tgFYbMEJCF5H3mgOGBqysJ0FKgL9fwYMKPg5nAEAsNiGAFABjAA==);width:36px;height:36px}.leaflet-control-layers .leaflet-control-layers-list,.leaflet-control-layers-expanded .leaflet-control-layers-toggle{display:none}.leaflet-control-layers-expanded .leaflet-control-layers-list{display:block;position:relative}.leaflet-control-layers-expanded{padding:6px 10px 6px 6px;color:#333;background:#fff}.leaflet-control-layers-scrollbar{overflow-y:scroll;overflow-x:hidden;padding-right:5px}.leaflet-control-layers-selector{margin-top:2px;position:relative;top:1px}.leaflet-control-layers label{display:block;font-size:1.08333em}.leaflet-control-layers-separator{height:0;border-top:1px solid #ddd;margin:5px -10px 5px -6px}.leaflet-default-icon-path{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAApCAYAAADAk4LOAAAFgUlEQVR4Aa1XA5BjWRTN2oW17d3YaGtsDt2kBxIMEhQMxQuIEQEByAvwByQH1xyFKAuwBGS3FCARBFQSkwOG1BBAM8hoGAmkgAFAGhBQIGAAAADiAbARbzHMW9I3k8wU)}.leaflet-container .leaflet-control-attribution{background:#fff;background:rgba(255,255,255,.7);margin:0}.leaflet-control-attribution,.leaflet-control-scale-line{padding:0 5px;color:#333;line-height:1.4}.leaflet-control-attribution a{text-decoration:none}.leaflet-control-attribution a:hover,.leaflet-control-attribution a:focus{text-decoration:underline}.leaflet-attribution-flag{display:inline!important;vertical-align:baseline!important;width:1em;height:.6669em}.leaflet-left .leaflet-control-scale{margin-left:5px}.leaflet-bottom .leaflet-control-scale{margin-bottom:5px}.leaflet-control-scale-line{border:2px solid #777;border-top:none;line-height:1.1;padding:2px 5px 1px;font-size:11px;white-space:nowrap;overflow:hidden;box-sizing:border-box;background:#fff;background:rgba(255,255,255,.5)}.leaflet-control-scale-line:not(:first-child){border-top:2px solid #777;border-bottom:none;margin-top:-2px}.leaflet-control-scale-line:not(:first-child):not(:last-child){border-bottom:2px solid #777}.leaflet-touch .leaflet-control-attribution,.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{box-shadow:none}.leaflet-touch .leaflet-control-layers,.leaflet-touch .leaflet-bar{border:2px solid rgba(0,0,0,.2);background-clip:padding-box}.leaflet-popup{position:absolute;text-align:center;margin-bottom:20px}.leaflet-popup-content-wrapper{padding:1px;text-align:left;border-radius:12px}.leaflet-popup-content{margin:13px 24px 13px 20px;line-height:1.3;min-height:1px}.leaflet-popup-content p{margin:17px 0 11px}.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-left:-20px;overflow:hidden;pointer-events:none}.leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;pointer-events:auto;-webkit-transform:rotate(45deg);-moz-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:white;color:#333;box-shadow:0 3px 14px rgba(0,0,0,.4)}.leaflet-container a.leaflet-popup-close-button{position:absolute;top:0;right:0;border:none;text-align:center;width:24px;height:24px;font:16px/24px Tahoma,Verdana,sans-serif;color:#757575;text-decoration:none;background:transparent}.leaflet-container a.leaflet-popup-close-button:hover,.leaflet-container a.leaflet-popup-close-button:focus{color:#585858}.leaflet-popup-scrolled{overflow:auto;border-bottom:1px solid #ddd;border-top:1px solid #ddd}.leaflet-oldie .leaflet-popup-content-wrapper{-ms-zoom:1}.leaflet-oldie .leaflet-popup-tip{width:24px;margin:0 auto}.leaflet-oldie .leaflet-control-zoom,.leaflet-oldie .leaflet-control-layers,.leaflet-oldie .leaflet-popup-content-wrapper,.leaflet-oldie .leaflet-popup-tip{border:1px solid #999}.leaflet-div-icon{background:#fff;border:1px solid #666}.leaflet-tooltip{position:absolute;padding:6px;background-color:#fff;border:1px solid #fff;border-radius:3px;color:#222;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;user-select:none;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.4)}.leaflet-tooltip.leaflet-interactive{cursor:pointer;pointer-events:auto}.leaflet-tooltip-top:before,.leaflet-tooltip-bottom:before,.leaflet-tooltip-left:before,.leaflet-tooltip-right:before{position:absolute;pointer-events:none;border:6px solid transparent;background:transparent;content:""}.leaflet-tooltip-bottom:before{top:0;left:50%;margin-left:-6px;margin-top:-12px;border-bottom-color:#fff}.leaflet-tooltip-top:before{bottom:0;left:50%;margin-left:-6px;margin-bottom:-12px;border-top-color:#fff}.leaflet-tooltip-left:before{top:50%;right:0;margin-top:-6px;margin-right:-12px;border-left-color:#fff}.leaflet-tooltip-right:before{top:50%;left:0;margin-top:-6px;margin-left:-12px;border-right-color:#fff}
 
-  /* Header im Westnetz-Design */
-  #kopf{
-    background:var(--wn-blau); color:#fff; padding:0 16px;
-    display:flex; align-items:center; gap:12px; flex-shrink:0; height:56px;
-    box-shadow:0 2px 8px rgba(0,57,118,.35);
-  }
-  #kopf-logo{display:flex; align-items:center; gap:10px; flex:1}
-  #kopf h1{font-size:16px; font-weight:600; letter-spacing:-.01em; line-height:1.2}
-  #kopf h1 small{display:block; font-size:11px; font-weight:400; opacity:.75; letter-spacing:0}
-  #online-punkt{width:8px; height:8px; border-radius:50%; background:#4ade80; flex-shrink:0}
+/* Westnetz Farben */
+:root{
+  --wn-blau:#003976;
+  --wn-blau-hell:#0057a8;
+  --wn-blau-mittel:#1a5fa8;
+  --wn-akzent:#e4001b;
+  --wn-gruen:#00843d;
+  --wn-orange:#e87722;
+  --wn-grau:#6e7275;
+  --wn-grau-hell:#f4f5f6;
+  --wn-grau-rand:#d0d3d4;
+  --bg:#f4f5f6;
+  --karte:#ffffff;
+  --linie:#d0d3d4;
+  --schrift:#1a1a1a;
+  --schrift2:#6e7275;
+  --radius:12px;
+  --radius-s:7px;
+}
 
-  /* Nav Tabs */
-  #nav{
-    display:flex; background:var(--wn-blau); border-bottom:2px solid rgba(255,255,255,.12); flex-shrink:0;
-    overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
-  }
-  #nav::-webkit-scrollbar{display:none}
-  .nav-tab{
-    flex:1; min-width:70px; padding:9px 4px 8px; text-align:center;
-    font-size:10.5px; font-weight:600; color:rgba(255,255,255,.65); border:none;
-    background:none; cursor:pointer; border-bottom:3px solid transparent;
-    display:flex; flex-direction:column; align-items:center; gap:4px;
-    white-space:nowrap; letter-spacing:.02em; text-transform:uppercase;
-    transition:color .15s, border-color .15s;
-  }
-  .nav-tab svg{flex-shrink:0}
-  .nav-tab.aktiv{color:#fff; border-bottom-color:#fff; background:rgba(255,255,255,.08)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--schrift);font-size:15px;display:flex;flex-direction:column}
 
-  /* Hauptinhalt */
-  #haupt{flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:20px}
-  #app{padding:12px}
-  h2{font-size:19px; font-weight:700; color:var(--wn-blau); margin-bottom:14px; letter-spacing:-.02em}
+/* Header */
+.header{background:var(--wn-blau);color:#fff;padding:0 16px;display:flex;align-items:center;gap:12px;height:56px;flex-shrink:0;position:sticky;top:0;z-index:900}
+.header-logo{display:flex;align-items:center;gap:10px}
+.header-logo svg{flex-shrink:0}
+.header-title{font-size:15px;font-weight:700;letter-spacing:.01em;line-height:1.2}
+.header-sub{font-size:11px;opacity:.75;font-weight:400}
+.online-punkt{width:8px;height:8px;border-radius:50%;background:#4ade80;margin-left:auto;flex-shrink:0;transition:background .4s}
 
-  /* Karten */
-  .karte{background:var(--karte); border-radius:var(--radius); padding:16px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,.08)}
-  .karte h3{font-size:12px; font-weight:700; color:var(--schrift2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:12px}
+/* Navigation */
+.nav{background:#fff;border-bottom:2px solid var(--linie);display:flex;flex-shrink:0;position:sticky;top:56px;z-index:800}
+.nav-tab{flex:1;padding:12px 4px 10px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--schrift2);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:3px;text-transform:uppercase;letter-spacing:.04em}
+.nav-tab svg{opacity:.6}
+.nav-tab.aktiv{color:var(--wn-blau);border-bottom-color:var(--wn-blau)}
+.nav-tab.aktiv svg{opacity:1}
 
-  /* Formulare */
-  label{display:block; font-size:13px; font-weight:600; color:var(--schrift2); margin-bottom:4px; margin-top:12px}
-  label:first-child{margin-top:0}
-  input[type=text], input[type=date], textarea, select{
-    width:100%; padding:11px 13px; border:1.5px solid var(--linie); border-radius:var(--radius-s);
-    font-size:16px; color:var(--schrift); background:#fff; outline:none;
-    -webkit-appearance:none; appearance:none; font-family:inherit;
-    transition:border-color .15s, box-shadow .15s;
-  }
-  input[type=text]:focus, textarea:focus, select:focus{border-color:var(--wn-blau-hell); box-shadow:0 0 0 3px rgba(0,87,168,.13)}
-  textarea{min-height:90px; resize:vertical; line-height:1.5}
-  .checkbox-zeile{display:flex; align-items:center; gap:10px; padding:10px 0}
-  .checkbox-zeile input[type=checkbox]{width:20px; height:20px; accent-color:var(--wn-blau)}
-  .checkbox-zeile label{margin:0; font-size:15px; color:var(--schrift)}
+/* Scroll Bereich */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:16px;padding-bottom:32px}
 
-  /* Mangel-Typ Toggle */
-  .typ-toggle{display:flex; border:1.5px solid var(--linie); border-radius:var(--radius-s); overflow:hidden; margin-top:4px}
-  .typ-toggle input[type=radio]{display:none}
-  .typ-toggle label{
-    flex:1; text-align:center; padding:11px 10px; font-size:14px; font-weight:600;
-    color:var(--schrift2); background:#fff; cursor:pointer; margin:0;
-    transition:background .15s, color .15s;
-  }
-  .typ-toggle input[type=radio]:checked + label{background:var(--wn-blau); color:#fff}
-  .typ-toggle label:not(:last-child){border-right:1.5px solid var(--linie)}
+/* Meldung */
+.meldung{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--wn-blau);color:#fff;padding:10px 20px;border-radius:30px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,57,118,.35);pointer-events:none;opacity:0;transition:opacity .2s;max-width:calc(100vw - 32px);text-align:center}
+.meldung.sichtbar{opacity:1}
 
-  /* Buttons */
-  .btn{
-    display:block; width:100%; padding:13px; border:none; border-radius:var(--radius-s);
-    font-size:15px; font-weight:700; cursor:pointer; text-align:center; margin-top:10px;
-    font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px;
-    transition:filter .15s;
-  }
-  .btn:active{filter:brightness(.92)}
-  .btn-blau{background:var(--wn-blau); color:#fff}
-  .btn-grau{background:var(--wn-grau-hell); color:var(--schrift)}
-  .btn-gruen{background:var(--wn-gruen); color:#fff}
-  .btn-rot{background:var(--wn-akzent); color:#fff}
-  .btn-orange{background:var(--wn-orange); color:#fff}
-  .btn-sm{font-size:12.5px; padding:9px 13px; width:auto; display:inline-flex; margin-top:0}
-  .btn-reihe{display:flex; gap:8px; flex-wrap:wrap}
-  .btn-reihe .btn{flex:1; margin-top:0; min-width:100px}
+/* Kacheln */
+.karte{background:var(--karte);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.karte h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--wn-grau);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--linie)}
 
-  /* Mängel-Karten im Logbuch */
-  .mangel-karte{
-    background:var(--karte); border-radius:var(--radius); padding:14px 14px 14px 16px;
-    margin-bottom:10px; box-shadow:0 1px 3px rgba(0,0,0,.08);
-    display:flex; align-items:flex-start; gap:12px; cursor:pointer;
-    border-left:4px solid var(--linie); border-top:1px solid var(--linie);
-    border-right:1px solid var(--linie); border-bottom:1px solid var(--linie);
-    transition:border-color .15s, box-shadow .15s;
-  }
-  .mangel-karte:active{box-shadow:0 2px 8px rgba(0,0,0,.12)}
-  .mangel-karte.offen{border-left-color:var(--wn-orange)}
-  .mangel-karte.behoben{border-left-color:var(--wn-gruen)}
-  .mangel-karte.kritisch{border-left-color:var(--wn-akzent)}
-  .mangel-info{flex:1; min-width:0}
-  .mangel-kategorie{font-size:15px; font-weight:700; color:var(--schrift); margin-bottom:3px}
-  .mangel-typ-badge{display:inline-block; font-size:11px; font-weight:700; padding:2px 7px; border-radius:4px; margin-bottom:5px; letter-spacing:.03em}
-  .mangel-typ-baumangel{background:#fef2f2; color:#991b1b}
-  .mangel-typ-unfertig{background:#fefce8; color:#854d0e}
-  .mangel-meta{font-size:12.5px; color:var(--schrift2); line-height:1.5}
-  .mangel-status{
-    font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px;
-    white-space:nowrap; letter-spacing:.04em; flex-shrink:0;
-  }
-  .status-offen{background:#fff3e0; color:#9a3412}
-  .status-behoben{background:#dcfce7; color:#166534}
-  .status-kritisch{background:#fef2f2; color:#991b1b}
+/* Statistik Kacheln */
+.stat-reihe{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat-karte{background:var(--karte);border-radius:var(--radius);padding:14px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.stat-zahl{font-size:28px;font-weight:800;line-height:1}
+.stat-label{font-size:11px;font-weight:600;color:var(--schrift2);margin-top:4px;text-transform:uppercase;letter-spacing:.05em}
+.farbe-blau{color:var(--wn-blau)}
+.farbe-orange{color:var(--wn-orange)}
+.farbe-gruen{color:var(--wn-gruen)}
+.farbe-rot{color:var(--wn-akzent)}
 
-  /* Projekt-Chip */
-  .projekt-chip{
-    display:inline-block; background:var(--wn-blau); color:#fff;
-    font-size:11px; font-weight:700; padding:2px 9px; border-radius:20px; margin-bottom:4px;
-    letter-spacing:.04em;
-  }
+/* Formulare */
+label{display:block;font-size:12px;font-weight:700;color:var(--schrift2);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 5px}
+input[type=text],input[type=date],select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--wn-grau-rand);border-radius:var(--radius-s);font-size:15px;color:var(--schrift);background:#fff;outline:none;font-family:inherit;-webkit-appearance:none;appearance:none;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--wn-blau);box-shadow:0 0 0 3px rgba(0,57,118,.12)}
+textarea{min-height:80px;resize:vertical;line-height:1.5}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236e7275' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+.checkbox-zeile{display:flex;align-items:center;gap:10px;padding:8px 0}
+.checkbox-zeile input[type=checkbox]{width:20px;height:20px;border-radius:4px;accent-color:var(--wn-blau);flex-shrink:0}
+.checkbox-zeile label{margin:0;font-size:14px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--schrift)}
+.aktion-info{font-size:12px;color:var(--schrift2);margin-top:4px;line-height:1.4}
 
-  /* Statistik-Reihe */
-  .stat-reihe{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px}
-  .stat-karte{background:var(--karte); border-radius:var(--radius); padding:14px 10px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.08)}
-  .stat-zahl{font-size:28px; font-weight:800; line-height:1}
-  .stat-label{font-size:11px; font-weight:600; color:var(--schrift2); margin-top:4px; text-transform:uppercase; letter-spacing:.04em}
-  .farbe-blau{color:var(--wn-blau)}
-  .farbe-orange{color:var(--wn-orange)}
-  .farbe-gruen{color:var(--wn-gruen)}
-  .farbe-rot{color:var(--wn-akzent)}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 16px;border-radius:var(--radius-s);border:none;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;width:100%;margin-bottom:8px;font-family:inherit;letter-spacing:.01em}
+.btn:active{transform:scale(.97)}
+.btn-blau{background:var(--wn-blau);color:#fff}
+.btn-blau:hover{background:var(--wn-blau-hell)}
+.btn-gruen{background:var(--wn-gruen);color:#fff}
+.btn-grau{background:var(--wn-grau-hell);color:var(--schrift);border:1.5px solid var(--wn-grau-rand)}
+.btn-rot{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+.btn-sm{padding:9px 12px;font-size:13px;margin-bottom:0}
+.btn-reihe{display:flex;gap:8px;flex-wrap:wrap}
+.btn-reihe .btn{flex:1;min-width:120px}
 
-  /* Foto-Grid */
-  .foto-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+/* Typ Toggle */
+.typ-toggle{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--wn-grau-rand);border-radius:var(--radius-s);overflow:hidden;margin-bottom:4px}
+.typ-toggle input{display:none}
+.typ-toggle label{padding:11px 8px;text-align:center;cursor:pointer;font-size:13px;font-weight:700;color:var(--schrift2);transition:all .15s;text-transform:none;letter-spacing:0;background:#fff;margin:0}
+.typ-toggle input:checked+label{background:var(--wn-blau);color:#fff;border-radius:0}
+.typ-toggle label:first-of-type{border-right:1px solid var(--wn-grau-rand)}
 
-  /* Info-Zeilen in Detailansicht */
-  .info-zeile{display:flex; padding:8px 0; border-bottom:1px solid var(--linie); font-size:14px}
-  .info-zeile:last-child{border-bottom:none}
-  .info-label{color:var(--schrift2); min-width:130px; flex-shrink:0; font-size:13px}
-  .info-wert{font-weight:600; word-break:break-word}
+/* GPS */
+.gps-info{font-size:12px;color:var(--schrift2);margin-top:6px;padding:6px 10px;background:var(--wn-grau-hell);border-radius:var(--radius-s)}
 
-  /* Filter-Reihe */
-  .filter-reihe{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+/* Karte Höhe */
+#karteWahl{height:380px;border-radius:var(--radius-s);display:none;margin-top:12px;z-index:1}
 
-  /* Stammdaten-Chips */
-  .stamm-chip-liste{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px}
-  .stamm-chip{
-    display:flex; align-items:center; gap:5px;
-    background:var(--wn-grau-hell); border-radius:20px;
-    padding:5px 10px; font-size:13px; border:1px solid var(--linie);
-  }
-  .stamm-chip button{
-    background:none; border:none; color:var(--schrift2); cursor:pointer;
-    font-size:16px; line-height:1; padding:0; display:flex; align-items:center;
-  }
-  .stamm-add-reihe{display:flex; gap:8px; align-items:center}
-  .stamm-add-reihe input{flex:1; margin:0}
-  .stamm-add-reihe .btn{margin-top:0; width:auto}
+/* Mangel Karten */
+.mangel-karte{background:var(--karte);border-radius:var(--radius);padding:14px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);border-left:4px solid transparent;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.mangel-karte:active{transform:scale(.99)}
+.mangel-karte.offen{border-left-color:var(--wn-orange)}
+.mangel-karte.kritisch{border-left-color:var(--wn-akzent)}
+.mangel-karte.behoben{border-left-color:var(--wn-gruen);opacity:.75}
+.mangel-info{flex:1;min-width:0}
+.mangel-kategorie{font-size:15px;font-weight:700;margin-bottom:4px;line-height:1.3}
+.mangel-meta{font-size:12px;color:var(--schrift2);line-height:1.6}
+.mangel-status{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}
+.status-offen{background:#fff3e0;color:#b45309}
+.status-kritisch{background:#fef2f2;color:#991b1b}
+.status-behoben{background:#f0fdf4;color:#166534}
+.projekt-chip{font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;background:var(--wn-blau);color:#fff;text-transform:uppercase;letter-spacing:.04em}
+.mangel-typ-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px}
+.mangel-typ-baumangel{background:#fef2f2;color:#991b1b}
+.mangel-typ-unfertig{background:#fefce8;color:#854d0e}
 
-  /* Meldung */
-  #meldung{
-    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-    background:var(--wn-blau); color:#fff; padding:11px 20px; border-radius:30px;
-    font-size:14px; font-weight:600; z-index:9999; display:none;
-    box-shadow:0 4px 16px rgba(0,0,0,.25); max-width:90%; text-align:center;
-    animation:einblenden .2s ease;
-  }
-  @keyframes einblenden{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+/* Kritisch Banner */
+.kritisch-banner{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:var(--radius-s);padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#991b1b;margin-bottom:14px}
 
-  /* Dialog */
-  #dialog-hintergrund{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:none;align-items:center;justify-content:center;padding:20px}
-  #dialog-hintergrund.aktiv{display:flex}
-  #dialog-box{background:#fff;border-radius:var(--radius);padding:24px;max-width:380px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.2)}
-  #dialog-box h3{font-size:17px;font-weight:800;color:var(--schrift);margin-bottom:8px}
-  #dialog-box p{font-size:14px;color:var(--schrift2);margin-bottom:20px;line-height:1.5}
-  .dialog-btn-reihe{display:flex;gap:8px}
-  .dialog-btn-reihe .btn{flex:1;margin:0}
+/* Filter */
+.filter-reihe{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.filter-reihe label{margin-top:0;margin-bottom:3px}
 
-  /* Passwort-Screen */
-  #pw-screen{
-    position:fixed; inset:0; background:var(--wn-blau);
-    display:flex; align-items:center; justify-content:center;
-    z-index:10000; padding:24px;
-  }
-  #pw-screen:not(.aktiv){display:none}
-  .pw-box{
-    background:#fff; border-radius:16px; padding:36px 28px;
-    max-width:360px; width:100%; text-align:center;
-    box-shadow:0 20px 60px rgba(0,0,0,.3);
-  }
-  .pw-logo{margin-bottom:20px}
-  .pw-box h2{font-size:20px; font-weight:800; color:var(--wn-blau); margin-bottom:6px}
-  .pw-box p{font-size:13px; color:var(--schrift2); margin-bottom:24px; line-height:1.5}
-  .pw-box input{margin-bottom:0; font-size:18px; letter-spacing:.1em; text-align:center}
+/* Mangel Ansicht */
+.info-zeile{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--linie);font-size:14px}
+.info-label{color:var(--schrift2);font-weight:600;min-width:120px;flex-shrink:0}
+.info-wert{font-weight:600}
 
-  /* Leer-Zustand */
-  .leer{text-align:center; padding:40px 20px; color:var(--schrift2)}
-  .leer svg{margin-bottom:14px; opacity:.4}
-  .leer p{font-size:14px; line-height:1.6}
+/* Fotos */
+.foto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 
-  /* Karte Auswahl */
-  #karteWahl{height:220px; border-radius:var(--radius-s); display:none; border:1.5px solid var(--linie); margin-top:8px}
-  .gps-info{font-size:12px; color:var(--schrift2); margin-top:5px}
+/* Leer-Zustand */
+.leer{text-align:center;padding:48px 20px;color:var(--schrift2)}
+.leer p{font-size:15px;margin-top:14px;line-height:1.5}
 
-  /* Bildlupe */
-  #bildLupe{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px}
-  #bildLupe.aktiv{display:flex}
-  #bildLupe img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
-  #bildLupe-schliessen{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:28px;line-height:1;padding:6px 12px;border-radius:8px;cursor:pointer}
+/* Auswertung Balken */
+.balken-zeile{padding:8px 0;border-bottom:1px solid var(--linie)}
+.balken-label{font-size:13px;font-weight:600;margin-bottom:5px;display:flex;justify-content:space-between}
+.balken-bg{background:var(--wn-grau-hell);border-radius:4px;height:8px;overflow:hidden}
+.balken-fill{height:100%;border-radius:4px;transition:width .4s}
 
-  /* Druckbereich versteckt */
-  #druckBereich{
-    position:fixed; left:-9999px; top:0; width:800px;
-    background:#fff; padding:32px; font-family:Arial,sans-serif; color:#000;
-  }
-  .druck-kopf{font-size:20px; font-weight:800; margin-bottom:16px; color:#003976; border-bottom:3px solid #003976; padding-bottom:10px}
-  .druck-info{width:100%; border-collapse:collapse; font-size:13px; margin-bottom:12px}
-  .druck-info td{padding:5px 8px; border-bottom:1px solid #eee}
-  .druck-info td:first-child{font-weight:700; color:#6e7275; width:38%}
-  .druck-kommentar{background:#f4f5f6; padding:12px; border-radius:6px; font-size:13px; line-height:1.6; margin-top:10px}
-  .druck-foto{width:180px; height:180px; object-fit:cover; border-radius:6px}
-  .druck-trenner{border:none; border-top:2px solid #e2e8f0; margin:16px 0}
+/* Übersicht Karte */
+#uebersichtKarte{height:360px;border-radius:var(--radius-s);z-index:1}
+.legende-reihe{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.legende-item{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--schrift2)}
+.legende-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 
-  /* Kritisch-Banner */
-  .kritisch-banner{background:#fef2f2; border-left:4px solid var(--wn-akzent); border-radius:var(--radius-s); padding:12px 14px; margin-bottom:12px; display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; color:#991b1b}
+/* Stammdaten */
+.chip-liste{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{display:flex;align-items:center;gap:6px;background:var(--wn-grau-hell);border:1.5px solid var(--wn-grau-rand);border-radius:20px;padding:6px 12px;font-size:13px;font-weight:600}
+.chip-loeschen{background:none;border:none;cursor:pointer;color:var(--schrift2);font-size:16px;line-height:1;padding:0;display:flex}
+.neu-eingabe{display:flex;gap:8px;margin-top:10px}
+.neu-eingabe input{flex:1;margin:0}
+.neu-eingabe .btn{width:auto;flex-shrink:0;white-space:nowrap;padding:11px 16px;margin:0}
 
-  /* Aktion-Hinweis */
-  .aktion-info{font-size:12px; color:var(--schrift2); margin-top:5px; font-style:italic}
+/* Bildschirm Vollbild */
+.bild-vollbild{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.bild-vollbild img{max-width:95vw;max-height:95vh;border-radius:8px}
+
+/* Bestätigungs Dialog */
+.dialog-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
+.dialog-box{background:#fff;border-radius:var(--radius);padding:24px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.dialog-box h3{font-size:17px;margin-bottom:8px}
+.dialog-box p{font-size:14px;color:var(--schrift2);line-height:1.5;margin-bottom:20px}
+.dialog-box .btn{margin-bottom:8px}
+.dialog-box .btn:last-child{margin-bottom:0}
+
+/* Druck Bereich */
+#druckBereich{position:fixed;left:-9999px;top:0;width:700px;padding:28px;font-family:Arial,sans-serif;background:#fff}
+.druck-kopf{font-size:20px;font-weight:800;margin-bottom:16px;color:#003976}
+.druck-info{width:100%;border-collapse:collapse;font-size:13px}
+.druck-info td{padding:5px 8px;border-bottom:1px solid #e5e7eb}
+.druck-info td:first-child{color:#6b7280;width:40%;font-weight:600}
+.druck-info td:last-child{font-weight:700}
+.druck-kommentar{margin-top:12px;padding:10px;background:#f9fafb;border-radius:6px;font-size:13px;line-height:1.5}
+.druck-trenner{margin:16px 0;border:none;border-top:2px solid #e5e7eb}
+.druck-foto{max-width:180px;max-height:180px;object-fit:cover;border-radius:6px}
+
+/* Mobile Anpassungen */
+@media(max-width:420px){
+  .stat-zahl{font-size:22px}
+  .stat-label{font-size:10px}
+  .filter-reihe{grid-template-columns:1fr}
+  .header-title{font-size:14px}
+  .nav-tab{font-size:11px;padding:10px 2px 8px}
+}
+@media(min-width:600px){
+  .scroll{max-width:680px;margin:0 auto}
+  #karteWahl{height:420px}
+  #uebersichtKarte{height:440px}
+}
+@media(min-width:900px){
+  .stat-reihe{grid-template-columns:repeat(6,1fr)}
+  .filter-reihe{grid-template-columns:repeat(3,1fr)}
+}
 </style>
 </head>
 <body>
 
-<!-- Passwort-Screen -->
-<div id="pw-screen" class="aktiv">
-  <div class="pw-box">
-    <div class="pw-logo">
-      <svg width="80" height="40" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="200" height="80" rx="8" fill="#003976"/>
-        <text x="20" y="52" font-family="Arial" font-size="34" font-weight="900" fill="#ffffff">west</text>
-        <text x="102" y="52" font-family="Arial" font-size="34" font-weight="900" fill="#e4001b">netz</text>
-      </svg>
-    </div>
-    <h2>Mängelerfassung</h2>
-    <p>Insolvenz-Dokumentation<br>Westnetz GmbH · Glasfaser</p>
-    <label>Passwort</label>
-    <input type="password" id="pw-feld" placeholder="Passwort eingeben" autocomplete="current-password" style="margin-bottom:16px">
-    <button class="btn btn-blau" onclick="passwortPruefen()" style="display:flex; align-items:center; justify-content:center; gap:8px">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      Anmelden
-    </button>
-  </div>
-</div>
-
-<!-- Header -->
-<div id="kopf">
-  <div id="kopf-logo">
-    <svg width="30" height="30" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="30" cy="30" r="30" fill="#0057a8"/>
-      <path d="M15 20 L30 10 L45 20 L45 40 L30 50 L15 40 Z" fill="none" stroke="white" stroke-width="2.5"/>
-      <circle cx="30" cy="30" r="6" fill="white"/>
-      <line x1="30" y1="10" x2="30" y2="24" stroke="white" stroke-width="2"/>
-      <line x1="45" y1="20" x2="34" y2="27" stroke="white" stroke-width="2"/>
-      <line x1="45" y1="40" x2="34" y2="33" stroke="white" stroke-width="2"/>
-      <line x1="30" y1="50" x2="30" y2="36" stroke="white" stroke-width="2"/>
-      <line x1="15" y1="40" x2="26" y2="33" stroke="white" stroke-width="2"/>
-      <line x1="15" y1="20" x2="26" y2="27" stroke="white" stroke-width="2"/>
+<div class="header">
+  <div class="header-logo">
+    <!-- Westnetz Logo als SVG -->
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="34" height="34" rx="6" fill="#fff"/>
+      <path d="M5 9h4.5l3.5 10 3.5-10H20l3.5 10 3.5-10H31" stroke="#003976" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <path d="M5 20h24" stroke="#e4001b" stroke-width="2" stroke-linecap="round"/>
     </svg>
-    <h1>Mängelerfassung<small>Insolvenzfall Glasfaser</small></h1>
+    <div>
+      <div class="header-title">Mängelerfassung</div>
+      <div class="header-sub">Westnetz GmbH – Insolvenzfall</div>
+    </div>
   </div>
-  <span id="online-punkt" title="Online-Status"></span>
+  <div id="online-punkt" class="online-punkt" title="Verbindungsstatus"></div>
 </div>
 
-<!-- Navigation -->
-<div id="nav">
+<nav class="nav">
   <button class="nav-tab aktiv" data-tab="mangel" onclick="zeigeTab('mangel')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Neu
   </button>
   <button class="nav-tab" data-tab="logbuch" onclick="zeigeTab('logbuch')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     Logbuch
   </button>
   <button class="nav-tab" data-tab="auswertung" onclick="zeigeTab('auswertung')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
     Übersicht
   </button>
   <button class="nav-tab" data-tab="stammdaten" onclick="zeigeTab('stammdaten')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
     Stammdaten
   </button>
+</nav>
+
+<div class="scroll" id="app">
+  <div style="text-align:center;padding:60px 20px;color:var(--schrift2)">Verbinde mit Datenbank…</div>
 </div>
 
-<!-- Hauptinhalt -->
-<div id="haupt">
-  <div id="app"></div>
-</div>
-
-<!-- Meldung -->
-<div id="meldung"></div>
-
-<!-- Dialog -->
-<div id="dialog-hintergrund">
-  <div id="dialog-box">
-    <h3 id="dialog-titel"></h3>
-    <p id="dialog-text"></p>
-    <div class="dialog-btn-reihe">
-      <button class="btn btn-grau" onclick="dialogSchliessen()">Abbrechen</button>
-      <button class="btn btn-blau" id="dialog-ok">OK</button>
-    </div>
-  </div>
-</div>
-
-<!-- Bildlupe -->
-<div id="bildLupe" onclick="this.classList.remove('aktiv')">
-  <button id="bildLupe-schliessen">&#x2715;</button>
-  <img id="bildLupe-bild" src="">
-</div>
-
-<!-- Druckbereich (versteckt) -->
+<div class="meldung" id="meldung"></div>
 <div id="druckBereich"></div>
-
-<!-- Versteckte Datei-Inputs -->
 <input type="file" id="fotoKamera" accept="image/*" capture="environment" style="display:none">
 <input type="file" id="fotoGalerie" accept="image/*" style="display:none">
 
 <script>
-// ===== KONSTANTEN =====
-const PASSWORT = 'holti';
-
-// Feste Projekte, nicht editierbar
-const PROJEKTE = ['Bestwig', 'Ense', 'Möhnesee', 'Arnsberg'];
-
-// 10 Mängeltypen/Kategorien
-const STANDARD_KATEGORIEN = [
-  'Asphalt fehlt',
-  'Pflasterregulierung',
-  'Rückenstütze fehlt',
-  'Bankett mangelhaft',
-  'Schaden beim Kunden',
-  'Nicht fertig gebauter HA',
-  'Fehlende Querung',
-  'Fehlende Asphaltnaht',
-  'Einfassung mangelhaft',
-  'Einführung mangelhaft'
-];
-
-// 11 vordefinierte Aktionen (Tippfehler korrigiert)
-const STANDARD_AKTIONEN = [
-  'Pflaster regulieren',
-  'Bankett wiederherstellen / Mutterboden anfüllen + Rasen einsäen',
-  'Schaden regulieren',
-  'HA an Längstrasse anbinden',
-  'Asphalt einbauen / Rückschnitt beachten',
-  'Pflaster regulieren + einsanden',
-  'Querung bauen',
-  'TOK-Band einbauen oder vergießen',
-  'Asphalt als Provisorium einbauen',
-  'Kantenstein neu setzen',
-  'Einführung regulieren'
-];
-
-// Farben je Kategorie für Auswertung
-const MANGEL_FARBEN = {
-  'Asphalt fehlt': '#003976',
-  'Pflasterregulierung': '#0057a8',
-  'Rückenstütze fehlt': '#1a5fa8',
-  'Bankett mangelhaft': '#e87722',
-  'Schaden beim Kunden': '#e4001b',
-  'Nicht fertig gebauter HA': '#7c3aed',
-  'Fehlende Querung': '#00843d',
-  'Fehlende Asphaltnaht': '#6e7275',
-  'Einfassung mangelhaft': '#b45309',
-  'Einführung mangelhaft': '#0e7490'
-};
-
 // Firebase Konfiguration
 const firebaseConfig = {
   apiKey: "AIzaSyCpW-NnQwU9Lb08brlkLdqG6Xh3ZqsYKwg",
@@ -414,150 +264,136 @@ const firebaseConfig = {
   messagingSenderId: "544503869793",
   appId: "1:544503869793:web:994f2dd081628bfb9f5520"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const COL = 'maengel_v2';
 
-// ===== ZUSTAND =====
-let stammdaten = {
-  firmen: [],
-  projektleiter: [],
-  kategorien: [...STANDARD_KATEGORIEN]
+// Konstanten
+const PROJEKTE = ['Bestwig','Ense','Möhnesee','Arnsberg'];
+const STANDARD_KATEGORIEN = [
+  'Asphalt fehlt','Pflasterregulierung','Rückenstütze fehlt',
+  'Bankett mangelhaft','Schaden beim Kunden','Nicht fertig gebauter HA',
+  'Fehlende Querung','Fehlende Asphaltnaht','Einfassung mangelhaft',
+  'Einführung mangelhaft'
+];
+const STANDARD_AKTIONEN = [
+  'Pflaster regulieren',
+  'Bankett wiederherstellen / Mutterboden anfüllen + Rasen einsäen',
+  'Schaden regulieren','HA an Längstrasse anbinden',
+  'Asphalt einbauen / Rückschnitt beachten',
+  'Pflaster regulieren + einsanden','Querung bauen',
+  'TOK-Band einbauen oder vergießen',
+  'Asphalt als Provisorium einbauen','Kantenstein neu setzen',
+  'Einführung regulieren'
+];
+const MANGEL_FARBEN = {
+  'Asphalt fehlt':'#003976','Pflasterregulierung':'#0057a8',
+  'Rückenstütze fehlt':'#1a5fa8','Bankett mangelhaft':'#e87722',
+  'Schaden beim Kunden':'#e4001b','Nicht fertig gebauter HA':'#7c3aed',
+  'Fehlende Querung':'#00843d','Fehlende Asphaltnaht':'#6e7275',
+  'Einfassung mangelhaft':'#b45309','Einführung mangelhaft':'#0e7490'
 };
+
+// Zustand
 let mangelIndex = [];
-let mangelEntwurf = neuerMangelEntwurf();
-let mangelFilter = { kategorie: '', firma: '', eintrager: '', status: '', projekt: '', mangelTyp: '', von: '', bis: '' };
+let stammdaten = { firmen: [], projektleiter: [] };
+let echtzeitAbmelden = null;
+let aktiverTab = 'mangel';
 let karteInstanz = null;
 let karteMarker = null;
-let aktiverFotoTarget = null;
-let echtzeitAbmelden = null;
-
-// ===== HILFSFUNKTIONEN =====
-function neueId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-}
-
-function heute() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function datumSchoen(d) {
-  if (!d) return '';
-  const [j, m, t] = d.split('-');
-  return `${t}.${m}.${j}`;
-}
-
-function zeitSchoen(iso) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return isNaN(d) ? '' : d.toLocaleTimeString('de', { hour: '2-digit', minute: '2-digit' });
-}
-
-function esc(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-function csvFeld(v) {
-  const s = String(v ?? '');
-  return s.includes(';') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g, '""') + '"' : s;
-}
-
+let uebersichtKarteInstanz = null;
 let meldungTimer = null;
+
+// Mängel Entwurf
+function neuerMangelEntwurf() {
+  return {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    mangelTyp: '', kategorie: '', aktion: '', projekt: '',
+    firma: '', subunternehmer: '', keinSubunternehmer: false,
+    eintrager: '', datum: heute(), kritisch: false, kommentar: '',
+    strasse: '', ort: '', lat: null, lng: null, fotos: []
+  };
+}
+let mangelEntwurf = neuerMangelEntwurf();
+
+// Filter
+let mangelFilter = { kategorie:'',firma:'',eintrager:'',status:'',projekt:'',mangelTyp:'',von:'',bis:'' };
+
+// Hilfsfunktionen
+function heute() { return new Date().toISOString().slice(0,10); }
+function datumSchoen(d) { if (!d) return '–'; const t=d.split('-'); return t[2]+'.'+t[1]+'.'+t[0]; }
+function zeitSchoen(iso) { if (!iso) return ''; const d=new Date(iso); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function csvFeld(v) { const s=String(v||''); return s.includes(';')||s.includes('"')||s.includes('\n') ? '"'+s.replace(/"/g,'""')+'"' : s; }
+
+// Meldung anzeigen
 function meldung(text) {
   const el = document.getElementById('meldung');
   el.textContent = text;
-  el.style.display = 'block';
+  el.classList.add('sichtbar');
   if (meldungTimer) clearTimeout(meldungTimer);
-  meldungTimer = setTimeout(() => { el.style.display = 'none'; }, 2800);
+  if (text) meldungTimer = setTimeout(() => el.classList.remove('sichtbar'), 3000);
+  else el.classList.remove('sichtbar');
 }
 
-function bestaetigung(titel, text, okText, cb) {
-  document.getElementById('dialog-titel').textContent = titel;
-  document.getElementById('dialog-text').textContent = text;
-  const okBtn = document.getElementById('dialog-ok');
-  okBtn.textContent = okText;
-  okBtn.onclick = () => { dialogSchliessen(); cb(); };
-  document.getElementById('dialog-hintergrund').classList.add('aktiv');
-}
-
-function dialogSchliessen() {
-  document.getElementById('dialog-hintergrund').classList.remove('aktiv');
-}
-
+// Vollbild Bild
 function bildGross(src) {
-  document.getElementById('bildLupe-bild').src = src;
-  document.getElementById('bildLupe').classList.add('aktiv');
+  const d = document.createElement('div');
+  d.className = 'bild-vollbild';
+  d.onclick = () => document.body.removeChild(d);
+  d.innerHTML = `<img src="${src}">`;
+  document.body.appendChild(d);
 }
 
-function neuerMangelEntwurf() {
-  return {
-    id: neueId(), kategorie: '', aktion: '', mangelTyp: '',
-    firma: '', eintrager: '', subunternehmer: '',
-    keinSubunternehmer: false, projekt: '', kommentar: '', fotos: [],
-    strasse: '', ort: '', lat: null, lng: null,
-    datum: heute(), gespeichertAm: null, behoben: false, behobenAm: null, kritisch: false
-  };
+// Bestätigungs Dialog
+function bestaetigung(titel, text, okText, cb) {
+  const bg = document.createElement('div');
+  bg.className = 'dialog-bg';
+  bg.innerHTML = `<div class="dialog-box">
+    <h3>${esc(titel)}</h3>
+    <p>${esc(text)}</p>
+    <button class="btn btn-blau" id="d-ok">${esc(okText)}</button>
+    <button class="btn btn-grau" id="d-ab">Abbrechen</button>
+  </div>`;
+  document.body.appendChild(bg);
+  document.getElementById('d-ok').onclick = () => { document.body.removeChild(bg); cb(); };
+  document.getElementById('d-ab').onclick = () => document.body.removeChild(bg);
 }
 
-// ===== FIRESTORE SPEICHER =====
-async function speicherSetzen(schluessel, wert) {
-  await db.collection(COL).doc(schluessel).set(wert);
+// Firestore Hilfsfunktionen
+async function speicherSetzen(id, daten) {
+  await db.collection(COL).doc(id).set(daten);
+}
+async function speicherHolen(id) {
+  const d = await db.collection(COL).doc(id).get();
+  return d.exists ? d.data() : null;
+}
+async function speicherLoeschen(id) {
+  await db.collection(COL).doc(id).delete();
 }
 
-async function speicherHolen(schluessel) {
-  const snap = await db.collection(COL).doc(schluessel).get();
-  return snap.exists ? snap.data() : null;
+// App Start
+async function app_start() {
+  echtzeitStarten();
+  stammdatenLaden();
 }
 
-async function speicherLoeschen(schluessel) {
-  await db.collection(COL).doc(schluessel).delete();
-}
-
+// Stammdaten laden
 async function stammdatenLaden() {
-  const d = await speicherHolen('stammdaten_maengel');
-  if (d) {
-    // Kategorien immer aus Konstante, nicht editierbar
-    stammdaten = {
-      firmen: d.firmen || [],
-      projektleiter: d.projektleiter || [],
-      kategorien: [...STANDARD_KATEGORIEN]
-    };
+  const doc = await speicherHolen('stammdaten_maengel');
+  if (doc) {
+    stammdaten.firmen = doc.firmen || [];
+    stammdaten.projektleiter = doc.projektleiter || [];
   }
+  if (aktiverTab === 'mangel') zeichneMangel();
 }
 
+// Stammdaten speichern
 async function stammdatenSpeichern() {
-  await speicherSetzen('stammdaten_maengel', {
-    firmen: stammdaten.firmen,
-    projektleiter: stammdaten.projektleiter,
-    kategorien: [...STANDARD_KATEGORIEN]
-  });
+  await speicherSetzen('stammdaten_maengel', stammdaten);
 }
 
-async function mangelIndexLaden() {
-  meldung('Mängel werden geladen…');
-  const snap = await db.collection(COL)
-    .where('__typ', '==', 'index')
-    .orderBy('gespeichertAm', 'desc')
-    .get().catch(async () => {
-      // Fallback: alle Dokumente laden und filtern
-      const alle = await db.collection(COL).get();
-      return { docs: alle.docs.filter(d => d.id.startsWith('mangelindex:')) };
-    });
-  mangelIndex = snap.docs
-    ? snap.docs.map(d => d.data())
-    : [];
-  if (!mangelIndex.length) {
-    // Fallback-Laden über ID-Präfix
-    const alle = await db.collection(COL).get();
-    mangelIndex = alle.docs
-      .filter(d => d.id.startsWith('mangelindex:'))
-      .map(d => d.data())
-      .sort((a, b) => (b.gespeichertAm || '').localeCompare(a.gespeichertAm || ''));
-  }
-  meldung('');
-}
-
+// Echtzeit Listener
 function echtzeitStarten() {
   if (echtzeitAbmelden) echtzeitAbmelden();
   echtzeitAbmelden = db.collection(COL).onSnapshot(snap => {
@@ -565,8 +401,8 @@ function echtzeitStarten() {
     snap.docs.forEach(d => {
       if (d.id.startsWith('mangelindex:')) neueIndex.push(d.data());
     });
-    if (neueIndex.length) {
-      mangelIndex = neueIndex.sort((a, b) => (b.gespeichertAm || '').localeCompare(a.gespeichertAm || ''));
+    if (neueIndex.length || snap.docs.some(d => d.id.startsWith('mangelindex:'))) {
+      mangelIndex = neueIndex.sort((a, b) => (b.gespeichertAm||'').localeCompare(a.gespeichertAm||''));
       zeichneAktuellenTab();
     }
     document.getElementById('online-punkt').style.background = '#4ade80';
@@ -575,10 +411,15 @@ function echtzeitStarten() {
   });
 }
 
-// ===== NAVIGATION =====
-let aktiverTab = 'mangel';
+// Navigation
 function zeigeTab(tab) {
   aktiverTab = tab;
+  // Karte aufräumen wenn Neu-Tab verlassen
+  if (tab !== 'mangel' && karteInstanz) {
+    karteInstanz.remove();
+    karteInstanz = null;
+    karteMarker = null;
+  }
   document.querySelectorAll('.nav-tab').forEach(b => {
     b.classList.toggle('aktiv', b.dataset.tab === tab);
   });
@@ -592,98 +433,68 @@ function zeichneAktuellenTab() {
   else if (aktiverTab === 'stammdaten') zeichneStammdaten();
 }
 
-// ===== PASSWORT =====
-function passwortPruefen() {
-  const pw = document.getElementById('pw-feld').value;
-  if (pw === PASSWORT) {
-    localStorage.setItem('maengel_auth', 'ja');
-    document.getElementById('pw-screen').classList.remove('aktiv');
-    app_start();
-  } else {
-    meldung('Falsches Passwort');
-    document.getElementById('pw-feld').value = '';
-  }
-}
-document.getElementById('pw-feld').addEventListener('keydown', e => {
-  if (e.key === 'Enter') passwortPruefen();
-});
-
-// ===== MANGEL FORMULAR =====
+// Mangel Formular
 function zeichneMangel() {
   const m = mangelEntwurf;
   document.getElementById('app').innerHTML = `
-    <h2>Neuer Mangel erfassen</h2>
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:14px;color:var(--wn-blau)">Neuer Mangel erfassen</h2>
 
     <div class="karte">
-      <h3>Klassifizierung</h3>
-
-      <label>Art des Mangels <span style="color:var(--wn-akzent)">*</span></label>
+      <h3>Art des Mangels</h3>
       <div class="typ-toggle">
-        <input type="radio" name="mangelTyp" id="typ-baumangel" value="Baumangel" ${m.mangelTyp === 'Baumangel' ? 'checked' : ''} onchange="mangelEntwurf.mangelTyp=this.value">
+        <input type="radio" name="mangelTyp" id="typ-baumangel" value="Baumangel" ${m.mangelTyp==='Baumangel'?'checked':''} onchange="mangelEntwurf.mangelTyp=this.value">
         <label for="typ-baumangel">Baumangel</label>
-        <input type="radio" name="mangelTyp" id="typ-unfertig" value="Unfertige Leistung" ${m.mangelTyp === 'Unfertige Leistung' ? 'checked' : ''} onchange="mangelEntwurf.mangelTyp=this.value">
+        <input type="radio" name="mangelTyp" id="typ-unfertig" value="Unfertige Leistung" ${m.mangelTyp==='Unfertige Leistung'?'checked':''} onchange="mangelEntwurf.mangelTyp=this.value">
         <label for="typ-unfertig">Unfertige Leistung</label>
       </div>
-
       <label>Mängelkategorie <span style="color:var(--wn-akzent)">*</span></label>
       <select onchange="mangelEntwurf.kategorie=this.value">
-        <option value="">Kategorie auswählen…</option>
-        ${STANDARD_KATEGORIEN.map(k => `<option value="${esc(k)}" ${m.kategorie === k ? 'selected' : ''}>${esc(k)}</option>`).join('')}
+        <option value="">Kategorie wählen…</option>
+        ${STANDARD_KATEGORIEN.map(k=>`<option value="${esc(k)}" ${m.kategorie===k?'selected':''}>${esc(k)}</option>`).join('')}
       </select>
-
       <label>Vorzunehmende Maßnahme <span style="color:var(--wn-akzent)">*</span></label>
       <select onchange="mangelEntwurf.aktion=this.value">
-        <option value="">Maßnahme auswählen…</option>
-        ${STANDARD_AKTIONEN.map(a => `<option value="${esc(a)}" ${m.aktion === a ? 'selected' : ''}>${esc(a)}</option>`).join('')}
+        <option value="">Maßnahme wählen…</option>
+        ${STANDARD_AKTIONEN.map(a=>`<option value="${esc(a)}" ${m.aktion===a?'selected':''}>${esc(a)}</option>`).join('')}
       </select>
-      <div class="aktion-info">Maßnahme die zur Beseitigung des Mangels erforderlich ist</div>
     </div>
 
     <div class="karte">
-      <h3>Projekt</h3>
+      <h3>Projekt &amp; Firma</h3>
       <label>Projekt <span style="color:var(--wn-akzent)">*</span></label>
       <select onchange="mangelEntwurf.projekt=this.value">
-        <option value="">Projekt auswählen…</option>
-        ${PROJEKTE.map(p => `<option value="${esc(p)}" ${m.projekt === p ? 'selected' : ''}>${esc(p)}</option>`).join('')}
+        <option value="">Projekt wählen…</option>
+        ${PROJEKTE.map(p=>`<option value="${esc(p)}" ${m.projekt===p?'selected':''}>${esc(p)}</option>`).join('')}
       </select>
-    </div>
-
-    <div class="karte">
-      <h3>Beteiligte Firmen</h3>
       <label>Tiefbaufirma <span style="color:var(--wn-akzent)">*</span></label>
       <select onchange="mangelEntwurf.firma=this.value">
-        <option value="">Firma auswählen…</option>
-        ${stammdaten.firmen.map(f => `<option value="${esc(f)}" ${m.firma === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}
+        <option value="">Firma wählen…</option>
+        ${stammdaten.firmen.map(f=>`<option value="${esc(f)}" ${m.firma===f?'selected':''}>${esc(f)}</option>`).join('')}
       </select>
-      ${!stammdaten.firmen.length ? '<div class="aktion-info">Firmen unter "Stammdaten" pflegen</div>' : ''}
-
-      <label>Subunternehmer</label>
+      ${!stammdaten.firmen.length?'<div class="aktion-info">Firmen unter "Stammdaten" pflegen</div>':''}
       <div class="checkbox-zeile">
-        <input type="checkbox" id="keinSubCheck" ${m.keinSubunternehmer ? 'checked' : ''} onchange="mangelEntwurf.keinSubunternehmer=this.checked; zeichneMangel()">
+        <input type="checkbox" id="keinSubCheck" ${m.keinSubunternehmer?'checked':''} onchange="mangelEntwurf.keinSubunternehmer=this.checked; zeichneMangel()">
         <label for="keinSubCheck">Kein Subunternehmer</label>
       </div>
-      ${!m.keinSubunternehmer ? `
-      <select onchange="mangelEntwurf.subunternehmer=this.value">
-        <option value="">Subunternehmer auswählen…</option>
-        ${stammdaten.firmen.map(f => `<option value="${esc(f)}" ${m.subunternehmer === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}
-      </select>` : ''}
+      ${!m.keinSubunternehmer?`<select onchange="mangelEntwurf.subunternehmer=this.value">
+        <option value="">Subunternehmer wählen…</option>
+        ${stammdaten.firmen.map(f=>`<option value="${esc(f)}" ${m.subunternehmer===f?'selected':''}>${esc(f)}</option>`).join('')}
+      </select>`:''}
     </div>
 
     <div class="karte">
       <h3>Erfassung</h3>
       <label>Erfasst durch <span style="color:var(--wn-akzent)">*</span></label>
       <select onchange="mangelEntwurf.eintrager=this.value">
-        <option value="">Projektleiter auswählen…</option>
-        ${stammdaten.projektleiter.map(p => `<option value="${esc(p)}" ${m.eintrager === p ? 'selected' : ''}>${esc(p)}</option>`).join('')}
+        <option value="">Projektleiter wählen…</option>
+        ${stammdaten.projektleiter.map(p=>`<option value="${esc(p)}" ${m.eintrager===p?'selected':''}>${esc(p)}</option>`).join('')}
       </select>
-      ${!stammdaten.projektleiter.length ? '<div class="aktion-info">Projektleiter unter "Stammdaten" pflegen</div>' : ''}
-
+      ${!stammdaten.projektleiter.length?'<div class="aktion-info">Projektleiter unter "Stammdaten" pflegen</div>':''}
       <label>Datum</label>
       <input type="date" value="${m.datum}" onchange="mangelEntwurf.datum=this.value" max="${heute()}">
-
       <div class="checkbox-zeile">
-        <input type="checkbox" id="kritischCheck" ${m.kritisch ? 'checked' : ''} onchange="mangelEntwurf.kritisch=this.checked">
-        <label for="kritischCheck" style="color:var(--wn-akzent); font-weight:700">Als kritisch markieren</label>
+        <input type="checkbox" id="kritischCheck" ${m.kritisch?'checked':''} onchange="mangelEntwurf.kritisch=this.checked">
+        <label for="kritischCheck" style="color:var(--wn-akzent);font-weight:700">Als kritisch markieren</label>
       </div>
     </div>
 
@@ -698,26 +509,25 @@ function zeichneMangel() {
       <input type="text" placeholder="z.B. Hauptstraße 12" value="${esc(m.strasse)}" oninput="mangelEntwurf.strasse=this.value">
       <label>Ort / Ortsteil</label>
       <input type="text" placeholder="z.B. Bestwig-Heringhausen" value="${esc(m.ort)}" oninput="mangelEntwurf.ort=this.value">
-
-      <div style="display:flex; gap:8px; margin-top:12px">
+      <div style="display:flex;gap:8px;margin-top:12px">
         <button class="btn btn-grau btn-sm" onclick="karteOeffnenOderGPS()" style="flex:1">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg>
-          GPS / Karte
+          GPS / Karte öffnen
         </button>
-        ${m.lat ? `<button class="btn btn-grau btn-sm" onclick="mangelEntwurf.lat=null; mangelEntwurf.lng=null; if(karteInstanz){karteInstanz.remove();karteInstanz=null;} zeichneMangel()">GPS löschen</button>` : ''}
+        ${m.lat?`<button class="btn btn-grau btn-sm" onclick="mangelEntwurf.lat=null;mangelEntwurf.lng=null;if(karteInstanz){karteInstanz.remove();karteInstanz=null;}zeichneMangel()">GPS löschen</button>`:''}
       </div>
-      ${m.lat ? `<div class="gps-info">GPS: ${m.lat}, ${m.lng}</div>` : '<div class="gps-info">Kein GPS gesetzt</div>'}
+      ${m.lat?`<div class="gps-info">GPS gesetzt: ${m.lat}, ${m.lng}</div>`:'<div class="gps-info">Kein GPS gesetzt – Karte antippen oder GPS nutzen</div>'}
       <div id="karteWahl"></div>
     </div>
 
     <div class="karte">
       <h3>Fotos</h3>
-      ${m.fotos.length ? `<div class="foto-grid" style="margin-bottom:12px">
-        ${m.fotos.map((f, i) => `<div style="position:relative">
+      ${m.fotos.length?`<div class="foto-grid" style="margin-bottom:12px">
+        ${m.fotos.map((f,i)=>`<div style="position:relative">
           <img src="${f}" onclick="bildGross(this.src)" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--radius-s);cursor:pointer">
           <button onclick="mangelFotoEntfernen(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">&#x2715;</button>
         </div>`).join('')}
-      </div>` : ''}
+      </div>`:''}
       <div class="btn-reihe">
         <button class="btn btn-grau btn-sm" onclick="fotoAnfordern('kamera')" style="flex:1">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -730,7 +540,7 @@ function zeichneMangel() {
       </div>
     </div>
 
-    <button class="btn btn-blau" onclick="mangelSpeichern()" style="font-size:17px; padding:16px; margin-bottom:4px">
+    <button class="btn btn-blau" onclick="mangelSpeichern()" style="font-size:17px;padding:16px;margin-bottom:4px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
       Mangel speichern
     </button>
@@ -739,6 +549,7 @@ function zeichneMangel() {
   if (m.lat) setTimeout(() => karteInitiieren(), 100);
 }
 
+// GPS und Karte
 function karteOeffnenOderGPS() {
   if (navigator.geolocation) {
     meldung('GPS wird ermittelt…');
@@ -748,7 +559,7 @@ function karteOeffnenOderGPS() {
       zeichneMangel();
       setTimeout(() => karteInitiieren(), 100);
     }, () => {
-      meldung('GPS nicht verfügbar, Karte zum Tippen öffnen');
+      meldung('GPS nicht verfügbar – Karte wird geöffnet');
       karteInitiierenOhnePunkt();
     }, { enableHighAccuracy: true, timeout: 8000 });
   } else {
@@ -765,10 +576,10 @@ function karteInitiieren() {
   const lng = mangelEntwurf.lng || 8.0;
   karteInstanz = L.map('karteWahl').setView([lat, lng], 16);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap', maxZoom: 19
+    attribution:'© OpenStreetMap', maxZoom:19
   }).addTo(karteInstanz);
   if (mangelEntwurf.lat) {
-    karteMarker = L.marker([lat, lng], { draggable: true }).addTo(karteInstanz);
+    karteMarker = L.marker([lat, lng], { draggable:true }).addTo(karteInstanz);
     karteMarker.on('dragend', e => {
       const p = e.target.getLatLng();
       mangelEntwurf.lat = parseFloat(p.lat.toFixed(6));
@@ -779,7 +590,7 @@ function karteInitiieren() {
     mangelEntwurf.lat = parseFloat(e.latlng.lat.toFixed(6));
     mangelEntwurf.lng = parseFloat(e.latlng.lng.toFixed(6));
     if (karteMarker) karteInstanz.removeLayer(karteMarker);
-    karteMarker = L.marker([mangelEntwurf.lat, mangelEntwurf.lng], { draggable: true }).addTo(karteInstanz);
+    karteMarker = L.marker([mangelEntwurf.lat, mangelEntwurf.lng], { draggable:true }).addTo(karteInstanz);
     karteMarker.on('dragend', ev => {
       const p = ev.target.getLatLng();
       mangelEntwurf.lat = parseFloat(p.lat.toFixed(6));
@@ -796,16 +607,14 @@ function karteInitiierenOhnePunkt() {
   karteInitiieren();
 }
 
+// Fotos
 function fotoAnfordern(quelle) {
-  aktiverFotoTarget = 'mangel';
   document.getElementById(quelle === 'kamera' ? 'fotoKamera' : 'fotoGalerie').click();
 }
-
 function mangelFotoEntfernen(i) {
   mangelEntwurf.fotos.splice(i, 1);
   zeichneMangel();
 }
-
 function fotoVerarbeiten(datei) {
   if (!datei) return;
   const leser = new FileReader();
@@ -814,67 +623,54 @@ function fotoVerarbeiten(datei) {
     img.onload = () => {
       const max = 1000;
       let w = img.width, h = img.height;
-      if (w > h && w > max) { h = h * max / w; w = max; }
-      else if (h >= w && h > max) { w = w * max / h; h = max; }
+      if (w > h && w > max) { h = h*max/w; w = max; }
+      else if (h >= w && h > max) { w = w*max/h; h = max; }
       const c = document.createElement('canvas');
       c.width = w; c.height = h;
       c.getContext('2d').drawImage(img, 0, 0, w, h);
-      const datenUrl = c.toDataURL('image/jpeg', 0.78);
-      mangelEntwurf.fotos.push(datenUrl);
+      mangelEntwurf.fotos.push(c.toDataURL('image/jpeg', 0.78));
       zeichneMangel();
     };
     img.src = ev.target.result;
   };
   leser.readAsDataURL(datei);
 }
+document.getElementById('fotoKamera').addEventListener('change', e => { fotoVerarbeiten(e.target.files[0]); e.target.value=''; });
+document.getElementById('fotoGalerie').addEventListener('change', e => { fotoVerarbeiten(e.target.files[0]); e.target.value=''; });
 
-document.getElementById('fotoKamera').addEventListener('change', e => { fotoVerarbeiten(e.target.files[0]); e.target.value = ''; });
-document.getElementById('fotoGalerie').addEventListener('change', e => { fotoVerarbeiten(e.target.files[0]); e.target.value = ''; });
-
+// Mangel speichern
 async function mangelSpeichern() {
   const m = mangelEntwurf;
-
-  // Plausibilitätsprüfung aller Pflichtfelder
-  if (!m.mangelTyp) { meldung('Bitte "Baumangel" oder "Unfertige Leistung" auswählen'); return; }
-  if (!m.kategorie) { meldung('Bitte Mängelkategorie auswählen'); return; }
-  if (!m.aktion) { meldung('Bitte vorzunehmende Maßnahme auswählen'); return; }
-  if (!m.projekt) { meldung('Bitte Projekt auswählen'); return; }
-  if (!m.firma) { meldung('Bitte Tiefbaufirma auswählen'); return; }
-  if (!m.keinSubunternehmer && !m.subunternehmer) { meldung('Bitte Subunternehmer auswählen oder "Kein Subunternehmer" ankreuzen'); return; }
-  if (!m.eintrager) { meldung('Bitte "Erfasst durch" auswählen'); return; }
+  if (!m.mangelTyp) { meldung('Bitte Art des Mangels wählen'); return; }
+  if (!m.kategorie) { meldung('Bitte Mängelkategorie wählen'); return; }
+  if (!m.aktion) { meldung('Bitte Maßnahme wählen'); return; }
+  if (!m.projekt) { meldung('Bitte Projekt wählen'); return; }
+  if (!m.firma) { meldung('Bitte Tiefbaufirma wählen'); return; }
+  if (!m.keinSubunternehmer && !m.subunternehmer) { meldung('Bitte Subunternehmer wählen oder "Kein Subunternehmer" ankreuzen'); return; }
+  if (!m.eintrager) { meldung('Bitte "Erfasst durch" wählen'); return; }
   if (!m.datum) { meldung('Bitte Datum angeben'); return; }
-
-  // Plausibilitätsprüfung Datum
-  if (m.datum > heute()) { meldung('Das Datum liegt in der Zukunft'); return; }
+  if (m.datum > heute()) { meldung('Datum liegt in der Zukunft'); return; }
 
   meldung('Wird gespeichert…');
   const jetzt = new Date().toISOString();
   m.gespeichertAm = jetzt;
 
-  // Fotos einzeln speichern
   const fotoAnzahl = m.fotos.length;
-  const fotos = [...m.fotos];
-  for (let i = 0; i < fotos.length; i++) {
-    await speicherSetzen('mangelfoto:' + m.id + ':' + i, { daten: fotos[i] });
+  for (let i = 0; i < m.fotos.length; i++) {
+    await speicherSetzen('mangelfoto:'+m.id+':'+i, { daten:m.fotos[i] });
   }
-
-  const mangelZumSpeichern = { ...m, fotos: [], fotoAnzahl };
-  await speicherSetzen('mangel:' + m.id, mangelZumSpeichern);
-
-  // Index-Dokument für schnelle Listenansicht
+  await speicherSetzen('mangel:'+m.id, { ...m, fotos:[], fotoAnzahl });
   const meta = {
-    id: m.id, kategorie: m.kategorie, aktion: m.aktion, mangelTyp: m.mangelTyp,
-    firma: m.firma, subunternehmer: m.subunternehmer || '',
-    keinSubunternehmer: m.keinSubunternehmer, eintrager: m.eintrager,
-    projekt: m.projekt || '', datum: m.datum, gespeichertAm: jetzt,
-    behoben: false, behobenAm: null, kritisch: m.kritisch, fotoAnzahl,
-    strasse: m.strasse, ort: m.ort, lat: m.lat, lng: m.lng,
-    __typ: 'index'
+    id:m.id, kategorie:m.kategorie, aktion:m.aktion, mangelTyp:m.mangelTyp,
+    firma:m.firma, subunternehmer:m.subunternehmer||'',
+    keinSubunternehmer:m.keinSubunternehmer, eintrager:m.eintrager,
+    projekt:m.projekt||'', datum:m.datum, gespeichertAm:jetzt,
+    behoben:false, behobenAm:null, kritisch:m.kritisch, fotoAnzahl,
+    strasse:m.strasse, ort:m.ort, lat:m.lat, lng:m.lng, __typ:'index'
   };
-  await speicherSetzen('mangelindex:' + m.id, meta);
-
+  await speicherSetzen('mangelindex:'+m.id, meta);
   mangelIndex.unshift(meta);
-  meldung('Mangel wurde gespeichert');
+  meldung('Mangel gespeichert');
   mangelZuruecksetzen();
   zeigeTab('logbuch');
 }
@@ -886,113 +682,98 @@ function mangelZuruecksetzen() {
   zeichneMangel();
 }
 
-// ===== LOGBUCH =====
+// Logbuch
 function zeichneLogbuch() {
   const gefiltert = mangelIndexGefiltert();
   const offen = gefiltert.filter(e => !e.behoben).length;
   const behoben = gefiltert.filter(e => e.behoben).length;
   const kritisch = gefiltert.filter(e => e.kritisch && !e.behoben).length;
-
-  const firmen = [...new Set(mangelIndex.map(e => e.firma).filter(Boolean))].sort();
-  const eintrager = [...new Set(mangelIndex.map(e => e.eintrager).filter(Boolean))].sort();
+  const firmen = [...new Set(mangelIndex.map(e=>e.firma).filter(Boolean))].sort();
+  const eintrager = [...new Set(mangelIndex.map(e=>e.eintrager).filter(Boolean))].sort();
 
   document.getElementById('app').innerHTML = `
-    <h2>Logbuch</h2>
-
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:14px;color:var(--wn-blau)">Logbuch</h2>
     <div class="stat-reihe">
-      <div class="stat-karte">
-        <div class="stat-zahl farbe-orange">${offen}</div>
-        <div class="stat-label">Offen</div>
-      </div>
-      <div class="stat-karte">
-        <div class="stat-zahl farbe-gruen">${behoben}</div>
-        <div class="stat-label">Behoben</div>
-      </div>
-      <div class="stat-karte">
-        <div class="stat-zahl farbe-rot">${kritisch}</div>
-        <div class="stat-label">Kritisch</div>
-      </div>
+      <div class="stat-karte"><div class="stat-zahl farbe-orange">${offen}</div><div class="stat-label">Offen</div></div>
+      <div class="stat-karte"><div class="stat-zahl farbe-gruen">${behoben}</div><div class="stat-label">Behoben</div></div>
+      <div class="stat-karte"><div class="stat-zahl farbe-rot">${kritisch}</div><div class="stat-label">Kritisch</div></div>
     </div>
-
-    ${kritisch > 0 ? `<div class="kritisch-banner">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    ${kritisch>0?`<div class="kritisch-banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       ${kritisch} kritische Mängel offen
-    </div>` : ''}
-
+    </div>`:''}
     <div class="karte">
       <h3>Filter</h3>
       <div class="filter-reihe">
         <div>
           <label>Projekt</label>
-          <select onchange="mangelFilter.projekt=this.value; zeichneLogbuch()">
+          <select onchange="mangelFilter.projekt=this.value;zeichneLogbuch()">
             <option value="">Alle</option>
-            ${PROJEKTE.map(p => `<option value="${esc(p)}" ${mangelFilter.projekt === p ? 'selected' : ''}>${esc(p)}</option>`).join('')}
-          </select>
-        </div>
-        <div>
-          <label>Kategorie</label>
-          <select onchange="mangelFilter.kategorie=this.value; zeichneLogbuch()">
-            <option value="">Alle</option>
-            ${STANDARD_KATEGORIEN.map(k => `<option value="${esc(k)}" ${mangelFilter.kategorie === k ? 'selected' : ''}>${esc(k)}</option>`).join('')}
-          </select>
-        </div>
-        <div>
-          <label>Art</label>
-          <select onchange="mangelFilter.mangelTyp=this.value; zeichneLogbuch()">
-            <option value="">Alle</option>
-            <option value="Baumangel" ${mangelFilter.mangelTyp === 'Baumangel' ? 'selected' : ''}>Baumangel</option>
-            <option value="Unfertige Leistung" ${mangelFilter.mangelTyp === 'Unfertige Leistung' ? 'selected' : ''}>Unfertige Leistung</option>
+            ${PROJEKTE.map(p=>`<option value="${esc(p)}" ${mangelFilter.projekt===p?'selected':''}>${esc(p)}</option>`).join('')}
           </select>
         </div>
         <div>
           <label>Status</label>
-          <select onchange="mangelFilter.status=this.value; zeichneLogbuch()">
+          <select onchange="mangelFilter.status=this.value;zeichneLogbuch()">
             <option value="">Alle</option>
-            <option value="offen" ${mangelFilter.status === 'offen' ? 'selected' : ''}>Offen</option>
-            <option value="behoben" ${mangelFilter.status === 'behoben' ? 'selected' : ''}>Behoben</option>
+            <option value="offen" ${mangelFilter.status==='offen'?'selected':''}>Offen</option>
+            <option value="behoben" ${mangelFilter.status==='behoben'?'selected':''}>Behoben</option>
+          </select>
+        </div>
+        <div>
+          <label>Kategorie</label>
+          <select onchange="mangelFilter.kategorie=this.value;zeichneLogbuch()">
+            <option value="">Alle</option>
+            ${STANDARD_KATEGORIEN.map(k=>`<option value="${esc(k)}" ${mangelFilter.kategorie===k?'selected':''}>${esc(k)}</option>`).join('')}
           </select>
         </div>
         <div>
           <label>Firma</label>
-          <select onchange="mangelFilter.firma=this.value; zeichneLogbuch()">
+          <select onchange="mangelFilter.firma=this.value;zeichneLogbuch()">
             <option value="">Alle</option>
-            ${firmen.map(f => `<option value="${esc(f)}" ${mangelFilter.firma === f ? 'selected' : ''}>${esc(f)}</option>`).join('')}
+            ${firmen.map(f=>`<option value="${esc(f)}" ${mangelFilter.firma===f?'selected':''}>${esc(f)}</option>`).join('')}
           </select>
         </div>
         <div>
-          <label>Erfasst durch</label>
-          <select onchange="mangelFilter.eintrager=this.value; zeichneLogbuch()">
+          <label>Art</label>
+          <select onchange="mangelFilter.mangelTyp=this.value;zeichneLogbuch()">
             <option value="">Alle</option>
-            ${eintrager.map(p => `<option value="${esc(p)}" ${mangelFilter.eintrager === p ? 'selected' : ''}>${esc(p)}</option>`).join('')}
+            <option value="Baumangel" ${mangelFilter.mangelTyp==='Baumangel'?'selected':''}>Baumangel</option>
+            <option value="Unfertige Leistung" ${mangelFilter.mangelTyp==='Unfertige Leistung'?'selected':''}>Unfertige Leistung</option>
           </select>
         </div>
         <div>
-          <label>Von</label>
-          <input type="date" value="${mangelFilter.von}" onchange="mangelFilter.von=this.value; zeichneLogbuch()">
+          <label>Eingetragen von</label>
+          <select onchange="mangelFilter.eintrager=this.value;zeichneLogbuch()">
+            <option value="">Alle</option>
+            ${eintrager.map(p=>`<option value="${esc(p)}" ${mangelFilter.eintrager===p?'selected':''}>${esc(p)}</option>`).join('')}
+          </select>
         </div>
         <div>
-          <label>Bis</label>
-          <input type="date" value="${mangelFilter.bis}" onchange="mangelFilter.bis=this.value; zeichneLogbuch()">
+          <label>Von Datum</label>
+          <input type="date" value="${mangelFilter.von}" onchange="mangelFilter.von=this.value;zeichneLogbuch()">
+        </div>
+        <div>
+          <label>Bis Datum</label>
+          <input type="date" value="${mangelFilter.bis}" onchange="mangelFilter.bis=this.value;zeichneLogbuch()">
         </div>
       </div>
       <button class="btn btn-grau btn-sm" style="margin-top:10px" onclick="filterZuruecksetzen()">Filter zurücksetzen</button>
     </div>
-
     <div class="btn-reihe" style="margin-bottom:12px">
       <button class="btn btn-grau btn-sm" onclick="maengellistePDF()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         PDF Liste (${gefiltert.length})
       </button>
       <button class="btn btn-grau btn-sm" onclick="csvExportieren()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         CSV Export
       </button>
     </div>
-
     ${gefiltert.length ? gefiltert.map(e => mangelKarteHtml(e)).join('') : `
       <div class="leer">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        <p>${mangelIndex.length ? 'Kein Mangel passt zu den Filtern.' : 'Noch keine Mängel erfasst.<br>Tippen Sie auf "Neu" um zu beginnen.'}</p>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <p>${mangelIndex.length?'Kein Mangel passt zu den Filtern.':'Noch keine Mängel erfasst.<br>Tippen Sie auf "Neu" um zu beginnen.'}</p>
       </div>`}`;
 }
 
@@ -1012,7 +793,7 @@ function mangelIndexGefiltert() {
 }
 
 function filterZuruecksetzen() {
-  mangelFilter = { kategorie: '', firma: '', eintrager: '', status: '', projekt: '', mangelTyp: '', von: '', bis: '' };
+  mangelFilter = { kategorie:'',firma:'',eintrager:'',status:'',projekt:'',mangelTyp:'',von:'',bis:'' };
   zeichneLogbuch();
 }
 
@@ -1020,39 +801,40 @@ function mangelKarteHtml(e) {
   const klasse = e.behoben ? 'behoben' : (e.kritisch ? 'kritisch' : 'offen');
   const statusText = e.behoben ? 'Behoben' : (e.kritisch ? 'KRITISCH' : 'Offen');
   const statusKlasse = e.behoben ? 'status-behoben' : (e.kritisch ? 'status-kritisch' : 'status-offen');
-  const typKlasse = e.mangelTyp === 'Baumangel' ? 'mangel-typ-baumangel' : 'mangel-typ-unfertig';
   return `<div class="mangel-karte ${klasse}" onclick="mangelOeffnen('${e.id}')">
     <div class="mangel-info">
-      <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:4px">
-        ${e.projekt ? `<span class="projekt-chip">${esc(e.projekt)}</span>` : ''}
-        ${e.mangelTyp ? `<span class="mangel-typ-badge ${typKlasse}">${esc(e.mangelTyp)}</span>` : ''}
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+        ${e.projekt?`<span class="projekt-chip">${esc(e.projekt)}</span>`:''}
+        ${e.mangelTyp?`<span class="mangel-typ-badge ${e.mangelTyp==='Baumangel'?'mangel-typ-baumangel':'mangel-typ-unfertig'}">${esc(e.mangelTyp)}</span>`:''}
       </div>
-      <div class="mangel-kategorie">${esc(e.kategorie || 'ohne Kategorie')}</div>
+      <div class="mangel-kategorie">${esc(e.kategorie||'ohne Kategorie')}</div>
       <div class="mangel-meta">
-        ${esc(e.firma || 'ohne Firma')}${e.subunternehmer && !e.keinSubunternehmer ? ', Sub: ' + esc(e.subunternehmer) : ''}
-        <br>${datumSchoen(e.datum)}${zeitSchoen(e.gespeichertAm) ? ', ' + zeitSchoen(e.gespeichertAm) + ' Uhr' : ''}
-        ${e.ort ? ' · ' + esc(e.ort) : ''}
-        ${e.eintrager ? '<br>' + esc(e.eintrager) : ''}
-        ${e.fotoAnzahl ? ' · ' + e.fotoAnzahl + ' Foto(s)' : ''}
+        ${esc(e.firma||'ohne Firma')}${e.subunternehmer&&!e.keinSubunternehmer?', Sub: '+esc(e.subunternehmer):''}
+        <br>${datumSchoen(e.datum)}${zeitSchoen(e.gespeichertAm)?', '+zeitSchoen(e.gespeichertAm)+' Uhr':''}
+        ${e.ort?' · '+esc(e.ort):''}
+        ${e.eintrager?'<br>'+esc(e.eintrager):''}
+        ${e.fotoAnzahl?' · '+e.fotoAnzahl+' Foto(s)':''}
       </div>
     </div>
     <span class="mangel-status ${statusKlasse}">${statusText}</span>
   </div>`;
 }
 
-// ===== MANGEL ANSICHT =====
+// Mangel Ansicht
 let ansichtMangel = null;
+let loeschBestaetigt = false;
 
 async function mangelOeffnen(id) {
   meldung('Wird geladen…');
-  const m = await speicherHolen('mangel:' + id);
+  const m = await speicherHolen('mangel:'+id);
   if (!m) { meldung('Mangel nicht gefunden'); return; }
   m.fotos = [];
-  for (let i = 0; i < (m.fotoAnzahl || 0); i++) {
-    const f = await speicherHolen('mangelfoto:' + id + ':' + i);
+  for (let i = 0; i < (m.fotoAnzahl||0); i++) {
+    const f = await speicherHolen('mangelfoto:'+id+':'+i);
     if (f) m.fotos.push(f.daten);
   }
   ansichtMangel = m;
+  meldung('');
   zeichneMangelAnsicht();
 }
 
@@ -1060,100 +842,66 @@ function zeichneMangelAnsicht() {
   const m = ansichtMangel;
   const farbe = m.behoben ? 'var(--wn-gruen)' : (m.kritisch ? 'var(--wn-akzent)' : 'var(--wn-orange)');
   const statusText = m.behoben ? 'Behoben' : (m.kritisch ? 'KRITISCH' : 'Offen');
-  const typKlasse = m.mangelTyp === 'Baumangel' ? 'mangel-typ-baumangel' : 'mangel-typ-unfertig';
 
   document.getElementById('app').innerHTML = `
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px">
-      <button class="btn btn-grau btn-sm" onclick="zeigeTab('logbuch')" style="margin:0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <button class="btn btn-grau btn-sm" onclick="zeigeTab('logbuch')" style="margin:0;width:auto">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
         Zurück
       </button>
-      <h2 style="margin:0; flex:1; font-size:17px">${esc(m.kategorie || 'Mangel')}</h2>
+      <h2 style="margin:0;flex:1;font-size:16px;font-weight:800;color:var(--wn-blau)">${esc(m.kategorie||'Mangel')}</h2>
     </div>
 
     <div class="karte" style="border-left:4px solid ${farbe}">
-      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:12px">
-        <span class="mangel-status ${m.behoben ? 'status-behoben' : (m.kritisch ? 'status-kritisch' : 'status-offen')}">${statusText}</span>
-        ${m.projekt ? `<span class="projekt-chip">${esc(m.projekt)}</span>` : ''}
-        ${m.mangelTyp ? `<span class="mangel-typ-badge ${typKlasse}">${esc(m.mangelTyp)}</span>` : ''}
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <span class="mangel-status ${m.behoben?'status-behoben':(m.kritisch?'status-kritisch':'status-offen')}">${statusText}</span>
+        ${m.projekt?`<span class="projekt-chip">${esc(m.projekt)}</span>`:''}
+        ${m.mangelTyp?`<span class="mangel-typ-badge ${m.mangelTyp==='Baumangel'?'mangel-typ-baumangel':'mangel-typ-unfertig'}">${esc(m.mangelTyp)}</span>`:''}
       </div>
-      <div class="info-zeile">
-        <span class="info-label">Kategorie</span>
-        <span class="info-wert">${esc(m.kategorie || '–')}</span>
-      </div>
-      <div class="info-zeile">
-        <span class="info-label">Maßnahme</span>
-        <span class="info-wert">${esc(m.aktion || '–')}</span>
-      </div>
-      <div class="info-zeile">
-        <span class="info-label">Tiefbaufirma</span>
-        <span class="info-wert">${esc(m.firma || '–')}</span>
-      </div>
-      <div class="info-zeile">
-        <span class="info-label">Subunternehmer</span>
-        <span class="info-wert">${m.keinSubunternehmer ? 'Keiner' : esc(m.subunternehmer || '–')}</span>
-      </div>
-      <div class="info-zeile">
-        <span class="info-label">Erfasst durch</span>
-        <span class="info-wert">${esc(m.eintrager || '–')}</span>
-      </div>
-      <div class="info-zeile">
-        <span class="info-label">Datum</span>
-        <span class="info-wert">${datumSchoen(m.datum)}${zeitSchoen(m.gespeichertAm) ? ', ' + zeitSchoen(m.gespeichertAm) + ' Uhr' : ''}</span>
-      </div>
-      ${(m.strasse || m.ort) ? `<div class="info-zeile">
-        <span class="info-label">Standort</span>
-        <span class="info-wert">${esc([m.strasse, m.ort].filter(Boolean).join(', '))}</span>
-      </div>` : ''}
-      ${m.lat ? `<div class="info-zeile">
-        <span class="info-label">GPS</span>
-        <span class="info-wert">${m.lat}, ${m.lng}</span>
-      </div>` : ''}
-      ${m.behoben && m.behobenAm ? `<div class="info-zeile">
-        <span class="info-label">Behoben am</span>
-        <span class="info-wert">${datumSchoen(m.behobenAm.slice(0, 10))}</span>
-      </div>` : ''}
+      <div class="info-zeile"><span class="info-label">Kategorie</span><span class="info-wert">${esc(m.kategorie||'–')}</span></div>
+      <div class="info-zeile"><span class="info-label">Maßnahme</span><span class="info-wert">${esc(m.aktion||'–')}</span></div>
+      <div class="info-zeile"><span class="info-label">Tiefbaufirma</span><span class="info-wert">${esc(m.firma||'–')}</span></div>
+      <div class="info-zeile"><span class="info-label">Subunternehmer</span><span class="info-wert">${m.keinSubunternehmer?'Keiner':esc(m.subunternehmer||'–')}</span></div>
+      <div class="info-zeile"><span class="info-label">Erfasst durch</span><span class="info-wert">${esc(m.eintrager||'–')}</span></div>
+      <div class="info-zeile"><span class="info-label">Datum</span><span class="info-wert">${datumSchoen(m.datum)}${zeitSchoen(m.gespeichertAm)?', '+zeitSchoen(m.gespeichertAm)+' Uhr':''}</span></div>
+      ${(m.strasse||m.ort)?`<div class="info-zeile"><span class="info-label">Standort</span><span class="info-wert">${esc([m.strasse,m.ort].filter(Boolean).join(', '))}</span></div>`:''}
+      ${m.lat?`<div class="info-zeile"><span class="info-label">GPS</span><span class="info-wert">${m.lat}, ${m.lng}</span></div>`:''}
+      ${m.behoben&&m.behobenAm?`<div class="info-zeile"><span class="info-label">Behoben am</span><span class="info-wert">${datumSchoen(m.behobenAm.slice(0,10))}</span></div>`:''}
     </div>
 
-    ${m.kommentar ? `<div class="karte">
-      <h3>Beschreibung</h3>
-      <div style="font-size:15px; line-height:1.6; white-space:pre-wrap">${esc(m.kommentar)}</div>
-    </div>` : ''}
+    ${m.kommentar?`<div class="karte"><h3>Beschreibung</h3><div style="font-size:15px;line-height:1.6;white-space:pre-wrap">${esc(m.kommentar)}</div></div>`:''}
 
-    ${m.lat ? `<div class="karte">
-      <h3>Karte</h3>
-      <div id="ansichtKarte" style="height:200px; border-radius:var(--radius-s)"></div>
-    </div>` : ''}
+    ${m.lat?`<div class="karte"><h3>Standort auf Karte</h3><div id="ansichtKarte" style="height:220px;border-radius:var(--radius-s)"></div></div>`:''}
 
     <div class="karte">
-      <h3>Fotos (${m.fotos ? m.fotos.length : 0})</h3>
-      ${m.fotos && m.fotos.length ? `<div class="foto-grid">
-        ${m.fotos.map(f => `<img src="${f}" onclick="bildGross(this.src)" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:var(--radius-s); cursor:pointer">`).join('')}
-      </div>` : '<div style="color:var(--schrift2); font-size:14px">Keine Fotos vorhanden</div>'}
+      <h3>Fotos (${m.fotos?m.fotos.length:0})</h3>
+      ${m.fotos&&m.fotos.length?`<div class="foto-grid">
+        ${m.fotos.map(f=>`<img src="${f}" onclick="bildGross(this.src)" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--radius-s);cursor:pointer">`).join('')}
+      </div>`:'<div style="color:var(--schrift2);font-size:14px">Keine Fotos</div>'}
     </div>
 
     <div class="karte">
       <h3>Aktionen</h3>
       <div class="btn-reihe" style="flex-wrap:wrap">
         ${m.behoben
-          ? `<button class="btn btn-grau" onclick="mangelWiederOeffnenAnfragen()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          ?`<button class="btn btn-grau" onclick="mangelWiederOeffnenAnfragen()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
               Wieder öffnen
             </button>`
-          : `<button class="btn btn-gruen" onclick="mangelBehobenAnfragen()">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          :`<button class="btn btn-gruen" onclick="mangelBehobenAnfragen()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               Als behoben markieren
             </button>`}
         <button class="btn btn-blau" onclick="mangelPDF()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Als PDF speichern
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF speichern
         </button>
         <button class="btn btn-grau" onclick="mangelAlsBildTeilen()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           Als Bild teilen
         </button>
         <button class="btn btn-rot" id="loeschBtn" onclick="loeschKnopf()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
           Mangel löschen
         </button>
       </div>
@@ -1162,10 +910,10 @@ function zeichneMangelAnsicht() {
   if (m.lat) setTimeout(() => {
     const el = document.getElementById('ansichtKarte');
     if (!el || typeof L === 'undefined') return;
-    const k = L.map('ansichtKarte', { zoomControl: true }).setView([m.lat, m.lng], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(k);
+    const k = L.map('ansichtKarte', { zoomControl:true }).setView([m.lat, m.lng], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OSM' }).addTo(k);
     const farbe = m.behoben ? '#00843d' : (m.kritisch ? '#e4001b' : '#e87722');
-    L.circleMarker([m.lat, m.lng], { radius: 8, color: farbe, fillColor: farbe, fillOpacity: 0.85, weight: 2 }).addTo(k);
+    L.circleMarker([m.lat, m.lng], { radius:8, color:farbe, fillColor:farbe, fillOpacity:0.85, weight:2 }).addTo(k);
     setTimeout(() => k.invalidateSize(), 200);
   }, 60);
 }
@@ -1175,12 +923,9 @@ function mangelBehobenAnfragen() {
     const m = ansichtMangel;
     m.behoben = true;
     m.behobenAm = new Date().toISOString();
-    await speicherSetzen('mangel:' + m.id, { ...m, fotos: [], fotoAnzahl: m.fotos ? m.fotos.length : 0 });
+    await speicherSetzen('mangel:'+m.id, { ...m, fotos:[], fotoAnzahl:m.fotos?m.fotos.length:0 });
     const meta = mangelIndex.find(e => e.id === m.id);
-    if (meta) {
-      meta.behoben = true; meta.behobenAm = m.behobenAm;
-      await speicherSetzen('mangelindex:' + m.id, meta);
-    }
+    if (meta) { meta.behoben = true; meta.behobenAm = m.behobenAm; await speicherSetzen('mangelindex:'+m.id, meta); }
     meldung('Als behoben markiert');
     zeichneMangelAnsicht();
   });
@@ -1190,18 +935,14 @@ function mangelWiederOeffnenAnfragen() {
   bestaetigung('Mangel wieder öffnen', 'Soll dieser Mangel wieder als offen markiert werden?', 'Wieder öffnen', async () => {
     const m = ansichtMangel;
     m.behoben = false; m.behobenAm = null;
-    await speicherSetzen('mangel:' + m.id, { ...m, fotos: [], fotoAnzahl: m.fotos ? m.fotos.length : 0 });
+    await speicherSetzen('mangel:'+m.id, { ...m, fotos:[], fotoAnzahl:m.fotos?m.fotos.length:0 });
     const meta = mangelIndex.find(e => e.id === m.id);
-    if (meta) {
-      meta.behoben = false; meta.behobenAm = null;
-      await speicherSetzen('mangelindex:' + m.id, meta);
-    }
+    if (meta) { meta.behoben = false; meta.behobenAm = null; await speicherSetzen('mangelindex:'+m.id, meta); }
     meldung('Mangel wieder geöffnet');
     zeichneMangelAnsicht();
   });
 }
 
-let loeschBestaetigt = false;
 function loeschKnopf() {
   const btn = document.getElementById('loeschBtn');
   if (!loeschBestaetigt) {
@@ -1211,7 +952,7 @@ function loeschKnopf() {
     setTimeout(() => {
       loeschBestaetigt = false;
       const b = document.getElementById('loeschBtn');
-      if (b) { b.style.background = ''; b.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Mangel löschen`; }
+      if (b) { b.style.background=''; b.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Mangel löschen`; }
     }, 4000);
   } else {
     loeschBestaetigt = false;
@@ -1222,241 +963,18 @@ function loeschKnopf() {
 async function mangelLoeschen() {
   const m = ansichtMangel;
   meldung('Wird gelöscht…');
-  for (let i = 0; i < (m.fotoAnzahl || (m.fotos ? m.fotos.length : 0)); i++) {
-    await speicherLoeschen('mangelfoto:' + m.id + ':' + i);
+  for (let i = 0; i < (m.fotoAnzahl||(m.fotos?m.fotos.length:0)); i++) {
+    await speicherLoeschen('mangelfoto:'+m.id+':'+i);
   }
-  await speicherLoeschen('mangel:' + m.id);
-  await speicherLoeschen('mangelindex:' + m.id);
+  await speicherLoeschen('mangel:'+m.id);
+  await speicherLoeschen('mangelindex:'+m.id);
   mangelIndex = mangelIndex.filter(e => e.id !== m.id);
   meldung('Mangel gelöscht');
   ansichtMangel = null;
   zeigeTab('logbuch');
 }
 
-// ===== PDF EXPORT =====
-async function mangelPDF() {
-  const m = ansichtMangel;
-  meldung('PDF wird erstellt…');
-  const bereich = document.getElementById('druckBereich');
-  bereich.innerHTML = `
-    <div class="druck-kopf">Mangel · ${esc(m.kategorie || 'ohne Kategorie')}</div>
-    <table class="druck-info">
-      <tr><td>Status</td><td>${m.behoben ? 'Behoben' : (m.kritisch ? 'KRITISCH' : 'Offen')}</td></tr>
-      <tr><td>Art des Mangels</td><td>${esc(m.mangelTyp || '–')}</td></tr>
-      <tr><td>Kategorie</td><td>${esc(m.kategorie || '–')}</td></tr>
-      <tr><td>Maßnahme</td><td>${esc(m.aktion || '–')}</td></tr>
-      <tr><td>Projekt</td><td>${esc(m.projekt || '–')}</td></tr>
-      <tr><td>Tiefbaufirma</td><td>${esc(m.firma || '–')}</td></tr>
-      <tr><td>Subunternehmer</td><td>${m.keinSubunternehmer ? 'Keiner' : esc(m.subunternehmer || '–')}</td></tr>
-      <tr><td>Erfasst durch</td><td>${esc(m.eintrager || '–')}</td></tr>
-      <tr><td>Datum</td><td>${datumSchoen(m.datum)}${zeitSchoen(m.gespeichertAm) ? ', ' + zeitSchoen(m.gespeichertAm) + ' Uhr' : ''}</td></tr>
-      ${(m.strasse || m.ort) ? `<tr><td>Standort</td><td>${esc([m.strasse, m.ort].filter(Boolean).join(', '))}</td></tr>` : ''}
-      ${m.lat ? `<tr><td>GPS</td><td>${m.lat}, ${m.lng}</td></tr>` : ''}
-      ${m.behoben && m.behobenAm ? `<tr><td>Behoben am</td><td>${datumSchoen(m.behobenAm.slice(0, 10))}</td></tr>` : ''}
-    </table>
-    ${m.kommentar ? `<div class="druck-kommentar"><b>Beschreibung:</b> ${esc(m.kommentar)}</div>` : ''}
-    ${m.fotos && m.fotos.length ? `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:12px">
-      ${m.fotos.map(f => `<img class="druck-foto" src="${f}">`).join('')}
-    </div>` : ''}`;
-  await druckStarten(bereich, 'Mangel_' + (m.kategorie || 'Eintrag').replace(/\s+/g, '_') + '_' + m.datum + '.pdf');
-}
-
-async function maengellistePDF() {
-  const gefiltert = mangelIndexGefiltert();
-  if (!gefiltert.length) { meldung('Keine Mängel in der aktuellen Auswahl'); return; }
-  meldung('PDF wird vorbereitet…');
-  const volle = [];
-  for (const e of gefiltert) {
-    const m = await speicherHolen('mangel:' + e.id);
-    if (!m) continue;
-    m.fotos = [];
-    for (let i = 0; i < (m.fotoAnzahl || 0); i++) {
-      const f = await speicherHolen('mangelfoto:' + e.id + ':' + i);
-      if (f) m.fotos.push(f.daten);
-    }
-    volle.push(m);
-  }
-
-  const bereich = document.getElementById('druckBereich');
-  let html = `<div class="druck-kopf">Mängelliste – Insolvenzfall Westnetz GmbH</div>
-    <table class="druck-info">
-      <tr><td>Erstellt am</td><td>${datumSchoen(heute())}</td></tr>
-      <tr><td>Anzahl Mängel</td><td>${volle.length}</td></tr>
-      <tr><td>Offen</td><td>${volle.filter(m => !m.behoben).length}</td></tr>
-      <tr><td>Behoben</td><td>${volle.filter(m => m.behoben).length}</td></tr>
-      <tr><td>Baumängel</td><td>${volle.filter(m => m.mangelTyp === 'Baumangel').length}</td></tr>
-      <tr><td>Unfertige Leistungen</td><td>${volle.filter(m => m.mangelTyp === 'Unfertige Leistung').length}</td></tr>
-    </table>`;
-
-  volle.forEach((m, i) => {
-    html += `<hr class="druck-trenner">
-      <div style="font-size:14px; font-weight:700; margin-bottom:6px">${i + 1}. ${esc(m.kategorie || 'ohne Kategorie')} · ${m.behoben ? 'Behoben' : (m.kritisch ? 'KRITISCH' : 'Offen')}</div>
-      <table class="druck-info">
-        <tr><td>Art</td><td>${esc(m.mangelTyp || '–')}</td></tr>
-        <tr><td>Maßnahme</td><td>${esc(m.aktion || '–')}</td></tr>
-        <tr><td>Projekt</td><td>${esc(m.projekt || '–')}</td></tr>
-        <tr><td>Tiefbaufirma</td><td>${esc(m.firma || '–')}</td></tr>
-        <tr><td>Subunternehmer</td><td>${m.keinSubunternehmer ? 'Keiner' : esc(m.subunternehmer || '–')}</td></tr>
-        <tr><td>Erfasst durch</td><td>${esc(m.eintrager || '–')}</td></tr>
-        <tr><td>Datum</td><td>${datumSchoen(m.datum)}</td></tr>
-        ${(m.strasse || m.ort) ? `<tr><td>Standort</td><td>${esc([m.strasse, m.ort].filter(Boolean).join(', '))}</td></tr>` : ''}
-      </table>
-      ${m.kommentar ? `<div class="druck-kommentar">${esc(m.kommentar)}</div>` : ''}
-      ${m.fotos && m.fotos.length ? `<div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px">
-        ${m.fotos.map(f => `<img class="druck-foto" style="width:140px; height:140px" src="${f}">`).join('')}
-      </div>` : ''}`;
-  });
-
-  bereich.innerHTML = html;
-  await druckStarten(bereich, 'Maengelliste_' + heute() + '.pdf');
-}
-
-async function druckStarten(bereich, dateiname) {
-  try {
-    const bilder = [...bereich.querySelectorAll('img')];
-    await Promise.all(bilder.map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })));
-    const { jsPDF } = window.jspdf;
-    const canvas = await html2canvas(bereich, { backgroundColor: '#ffffff', scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL('image/jpeg', 0.9);
-    const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
-    const hoehe = Math.round(canvas.height * 190 / canvas.width);
-    let y = 10;
-    const seitenHoehe = 277;
-    if (hoehe <= seitenHoehe) {
-      pdf.addImage(imgData, 'JPEG', 10, y, 190, hoehe);
-    } else {
-      let verbleibend = hoehe;
-      let yOffset = 0;
-      while (verbleibend > 0) {
-        const teil = Math.min(seitenHoehe, verbleibend);
-        const anteil = teil / hoehe;
-        const teilCanvas = document.createElement('canvas');
-        teilCanvas.width = canvas.width;
-        teilCanvas.height = Math.round(canvas.height * anteil);
-        const ctx = teilCanvas.getContext('2d');
-        ctx.drawImage(canvas, 0, Math.round(yOffset / hoehe * canvas.height), canvas.width, teilCanvas.height, 0, 0, canvas.width, teilCanvas.height);
-        if (yOffset > 0) pdf.addPage();
-        pdf.addImage(teilCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 10, 10, 190, teil);
-        yOffset += teil;
-        verbleibend -= teil;
-      }
-    }
-    // PDF über Downloads API speichern
-    const pdfBlob = pdf.output('blob');
-    try {
-      const downloads = await claude.use('downloads');
-      await downloads.save({ filename: dateiname, data: pdfBlob });
-      meldung('PDF wurde gespeichert');
-    } catch (e) {
-      // Fallback falls API nicht verfügbar
-      pdf.save(dateiname);
-      meldung('PDF wurde gespeichert');
-    }
-  } catch (err) {
-    console.error(err);
-    meldung('PDF konnte nicht erstellt werden: ' + err.message);
-  }
-}
-
-async function mangelAlsBildTeilen() {
-  const m = ansichtMangel;
-  meldung('Bild wird vorbereitet…');
-  const karte = document.createElement('div');
-  karte.style.cssText = 'position:fixed;left:-9999px;top:0;width:600px;background:#fff;padding:28px;font-family:Arial,sans-serif;border-radius:12px;color:#000';
-  const farbe = m.behoben ? '#00843d' : (m.kritisch ? '#e4001b' : '#e87722');
-  karte.innerHTML = `
-    <div style="font-size:11px;color:#9ca3af;margin-bottom:12px">Mängelerfassung · Westnetz GmbH · Insolvenz-Dokumentation</div>
-    <div style="font-size:22px;font-weight:800;margin-bottom:4px">Ausführungsmangel</div>
-    <div style="font-size:17px;font-weight:700;color:${farbe};margin-bottom:4px">${esc(m.kategorie || '–')}</div>
-    <div style="font-size:13px;margin-bottom:14px;color:#6b7280">${esc(m.mangelTyp || '')}</div>
-    <div style="display:inline-block;padding:4px 14px;border-radius:20px;background:${farbe};color:#fff;font-size:13px;font-weight:700;margin-bottom:16px">${m.behoben ? 'Behoben' : (m.kritisch ? 'KRITISCH' : 'Offen')}</div>
-    <table style="width:100%;font-size:14px;border-collapse:collapse">
-      ${m.aktion ? `<tr><td style="padding:4px 0;color:#6b7280;width:40%">Maßnahme</td><td style="padding:4px 0;font-weight:600">${esc(m.aktion)}</td></tr>` : ''}
-      <tr><td style="padding:4px 0;color:#6b7280">Tiefbaufirma</td><td style="padding:4px 0;font-weight:600">${esc(m.firma || '–')}</td></tr>
-      ${m.subunternehmer ? `<tr><td style="padding:4px 0;color:#6b7280">Subunternehmer</td><td style="padding:4px 0;font-weight:600">${esc(m.subunternehmer)}</td></tr>` : ''}
-      <tr><td style="padding:4px 0;color:#6b7280">Erfasst durch</td><td style="padding:4px 0;font-weight:600">${esc(m.eintrager || '–')}</td></tr>
-      <tr><td style="padding:4px 0;color:#6b7280">Datum</td><td style="padding:4px 0;font-weight:600">${datumSchoen(m.datum)}</td></tr>
-      ${(m.strasse || m.ort) ? `<tr><td style="padding:4px 0;color:#6b7280">Standort</td><td style="padding:4px 0;font-weight:600">${esc([m.strasse, m.ort].filter(Boolean).join(', '))}</td></tr>` : ''}
-    </table>
-    ${m.kommentar ? `<div style="margin-top:14px;padding:12px;background:#f9fafb;border-radius:8px;font-size:14px;line-height:1.5">${esc(m.kommentar)}</div>` : ''}
-    ${m.fotos && m.fotos.length ? `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
-      ${m.fotos.slice(0, 4).map(f => `<img src="${f}" style="width:160px;height:160px;object-fit:cover;border-radius:8px">`).join('')}
-    </div>` : ''}`;
-  document.body.appendChild(karte);
-  const bilder = [...karte.querySelectorAll('img')];
-  await Promise.all(bilder.map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })));
-  try {
-    const canvas = await html2canvas(karte, { backgroundColor: '#ffffff', scale: 2 });
-    document.body.removeChild(karte);
-    canvas.toBlob(async blob => {
-      if (!blob) { meldung('Bild konnte nicht erstellt werden'); return; }
-      const name = 'Mangel_' + (m.kategorie || 'Eintrag').replace(/\s+/g, '_') + '_' + m.datum + '.png';
-      const datei = new File([blob], name, { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [datei] })) {
-        try { await navigator.share({ files: [datei], title: 'Mangel ' + (m.kategorie || '') }); }
-        catch (e) { if (e.name !== 'AbortError') meldung('Teilen abgebrochen'); }
-      } else {
-        try {
-          const downloads = await claude.use('downloads');
-          await downloads.save({ filename: name, data: blob });
-          meldung('Bild heruntergeladen');
-        } catch (e) {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = name;
-          document.body.appendChild(a); a.click(); a.remove();
-          URL.revokeObjectURL(url);
-          meldung('Bild heruntergeladen');
-        }
-      }
-    }, 'image/png');
-  } catch (err) {
-    if (document.body.contains(karte)) document.body.removeChild(karte);
-    meldung('Fehler: ' + err.message);
-  }
-}
-
-// ===== CSV EXPORT =====
-async function csvExportieren() {
-  const gefiltert = mangelIndexGefiltert();
-  if (!gefiltert.length) { meldung('Keine Mängel zum Exportieren'); return; }
-  meldung('CSV wird erstellt…');
-  const spalten = ['Art', 'Kategorie', 'Maßnahme', 'Projekt', 'Status', 'Tiefbaufirma', 'Subunternehmer', 'Erfasst durch', 'Datum', 'Uhrzeit', 'Strasse', 'Ort', 'GPS Lat', 'GPS Lng', 'Fotos', 'Behoben am', 'Beschreibung'];
-  const zeilen = [spalten.join(';')];
-  for (const e of gefiltert) {
-    const m = await speicherHolen('mangel:' + e.id);
-    zeilen.push([
-      e.mangelTyp || '', e.kategorie || '', e.aktion || '', e.projekt || '',
-      e.behoben ? 'Behoben' : 'Offen',
-      e.firma || '', e.keinSubunternehmer ? 'Keiner' : (e.subunternehmer || ''),
-      e.eintrager || '', e.datum || '', zeitSchoen(e.gespeichertAm),
-      e.strasse || '', e.ort || '', e.lat ?? '', e.lng ?? '',
-      e.fotoAnzahl ?? 0,
-      e.behobenAm ? datumSchoen(e.behobenAm.slice(0, 10)) : '',
-      m ? (m.kommentar || '') : ''
-    ].map(csvFeld).join(';'));
-  }
-  csvHerunterladen(zeilen, 'Maengelliste_' + heute() + '.csv');
-}
-
-async function csvHerunterladen(zeilen, dateiname) {
-  const inhalt = '﻿' + zeilen.join('\r\n');
-  const blob = new Blob([inhalt], { type: 'text/csv;charset=utf-8;' });
-  try {
-    const downloads = await claude.use('downloads');
-    await downloads.save({ filename: dateiname, data: blob });
-    meldung('CSV wurde erstellt');
-  } catch (e) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = dateiname;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-    meldung('CSV wurde erstellt');
-  }
-}
-
-// ===== AUSWERTUNG =====
+// Übersicht (große Karte + Auswertung)
 function zeichneAuswertung() {
   const offen = mangelIndex.filter(e => !e.behoben).length;
   const behoben = mangelIndex.filter(e => e.behoben).length;
@@ -1465,262 +983,441 @@ function zeichneAuswertung() {
   const baumangel = mangelIndex.filter(e => e.mangelTyp === 'Baumangel').length;
   const unfertig = mangelIndex.filter(e => e.mangelTyp === 'Unfertige Leistung').length;
 
-  // Zählung nach Kategorie
+  // Nach Kategorie
   const katZaehlung = {};
-  STANDARD_KATEGORIEN.forEach(k => { katZaehlung[k] = { offen: 0, behoben: 0 }; });
+  STANDARD_KATEGORIEN.forEach(k => { katZaehlung[k] = { offen:0, behoben:0 }; });
   mangelIndex.forEach(e => {
-    if (!katZaehlung[e.kategorie]) katZaehlung[e.kategorie] = { offen: 0, behoben: 0 };
+    if (!katZaehlung[e.kategorie]) katZaehlung[e.kategorie] = { offen:0, behoben:0 };
     if (e.behoben) katZaehlung[e.kategorie].behoben++;
     else katZaehlung[e.kategorie].offen++;
   });
 
-  // Zählung nach Projekt
+  // Nach Projekt
   const projektZaehlung = {};
-  PROJEKTE.forEach(p => { projektZaehlung[p] = 0; });
+  PROJEKTE.forEach(p => { projektZaehlung[p] = { offen:0, behoben:0 }; });
   mangelIndex.forEach(e => {
-    if (e.projekt) projektZaehlung[e.projekt] = (projektZaehlung[e.projekt] || 0) + 1;
+    if (!e.projekt) return;
+    if (!projektZaehlung[e.projekt]) projektZaehlung[e.projekt] = { offen:0, behoben:0 };
+    if (e.behoben) projektZaehlung[e.projekt].behoben++;
+    else projektZaehlung[e.projekt].offen++;
   });
 
-  // Zählung nach Firma
+  // Nach Firma
   const firmaZaehlung = {};
   mangelIndex.forEach(e => {
     if (!e.firma) return;
-    if (!firmaZaehlung[e.firma]) firmaZaehlung[e.firma] = 0;
-    firmaZaehlung[e.firma]++;
+    if (!firmaZaehlung[e.firma]) firmaZaehlung[e.firma] = { offen:0, behoben:0 };
+    if (e.behoben) firmaZaehlung[e.firma].behoben++;
+    else firmaZaehlung[e.firma].offen++;
   });
 
-  // Monats-Verlauf
-  const monatsDaten = {};
+  // Ort Auswertung
+  const ortZaehlung = {};
   mangelIndex.forEach(e => {
-    if (!e.datum) return;
-    const m = e.datum.slice(0, 7);
-    if (!monatsDaten[m]) monatsDaten[m] = 0;
-    monatsDaten[m]++;
+    const ort = e.ort || 'Unbekannt';
+    if (!ortZaehlung[ort]) ortZaehlung[ort] = 0;
+    ortZaehlung[ort]++;
   });
-  const monateGeordnet = Object.keys(monatsDaten).sort();
+  const ortenGeordnet = Object.entries(ortZaehlung).sort((a,b) => b[1]-a[1]).slice(0,8);
 
-  const maxKat = Math.max(1, ...STANDARD_KATEGORIEN.map(k => (katZaehlung[k]?.offen || 0) + (katZaehlung[k]?.behoben || 0)));
+  const maxKat = Math.max(1, ...STANDARD_KATEGORIEN.map(k => (katZaehlung[k]?.offen||0)+(katZaehlung[k]?.behoben||0)));
+  const firmenSortiert = Object.entries(firmaZaehlung).sort((a,b) => (b[1].offen+b[1].behoben)-(a[1].offen+a[1].behoben));
+  const maxFirma = Math.max(1, ...firmenSortiert.map(([,v]) => v.offen+v.behoben));
 
   document.getElementById('app').innerHTML = `
-    <h2>Übersicht</h2>
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:14px;color:var(--wn-blau)">Übersicht & Auswertung</h2>
 
-    <div class="stat-reihe">
-      <div class="stat-karte">
-        <div class="stat-zahl farbe-blau">${gesamt}</div>
-        <div class="stat-label">Gesamt</div>
-      </div>
-      <div class="stat-karte">
-        <div class="stat-zahl farbe-orange">${offen}</div>
-        <div class="stat-label">Offen</div>
-      </div>
-      <div class="stat-karte">
-        <div class="stat-zahl farbe-gruen">${behoben}</div>
-        <div class="stat-label">Behoben</div>
-      </div>
+    <!-- Haupt-Statistik -->
+    <div class="stat-reihe" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-karte"><div class="stat-zahl farbe-blau">${gesamt}</div><div class="stat-label">Gesamt</div></div>
+      <div class="stat-karte"><div class="stat-zahl farbe-orange">${offen}</div><div class="stat-label">Offen</div></div>
+      <div class="stat-karte"><div class="stat-zahl farbe-gruen">${behoben}</div><div class="stat-label">Behoben</div></div>
+    </div>
+    <div class="stat-reihe" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px">
+      <div class="stat-karte"><div class="stat-zahl farbe-rot">${kritisch}</div><div class="stat-label">Kritisch</div></div>
+      <div class="stat-karte"><div class="stat-zahl" style="color:#991b1b">${baumangel}</div><div class="stat-label">Baumängel</div></div>
+      <div class="stat-karte"><div class="stat-zahl" style="color:#854d0e">${unfertig}</div><div class="stat-label">Unfertig</div></div>
     </div>
 
-    ${kritisch > 0 ? `<div class="kritisch-banner">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    ${kritisch>0?`<div class="kritisch-banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       ${kritisch} kritische Mängel offen
-    </div>` : ''}
+    </div>`:''}
 
+    <!-- Große Karte mit allen Mängeln -->
     <div class="karte">
-      <h3>Art der Mängel</h3>
-      <div style="display:flex; gap:12px">
-        <div style="flex:1; background:#fef2f2; border-radius:var(--radius-s); padding:14px; text-align:center">
-          <div style="font-size:26px; font-weight:800; color:#991b1b">${baumangel}</div>
-          <div style="font-size:12px; font-weight:700; color:#991b1b; text-transform:uppercase; margin-top:4px">Baumängel</div>
-        </div>
-        <div style="flex:1; background:#fefce8; border-radius:var(--radius-s); padding:14px; text-align:center">
-          <div style="font-size:26px; font-weight:800; color:#854d0e">${unfertig}</div>
-          <div style="font-size:12px; font-weight:700; color:#854d0e; text-transform:uppercase; margin-top:4px">Unfertige Leistungen</div>
-        </div>
+      <h3>Karte – Alle Mängel (${mangelIndex.filter(e=>e.lat).length} mit GPS)</h3>
+      <div id="uebersichtKarte"></div>
+      <div class="legende-reihe" style="margin-top:10px">
+        ${STANDARD_KATEGORIEN.map(k=>`<div class="legende-item"><div class="legende-dot" style="background:${MANGEL_FARBEN[k]||'#003976'}"></div>${esc(k)}</div>`).join('')}
       </div>
     </div>
 
+    <!-- Nach Projekt -->
     <div class="karte">
       <h3>Nach Projekt</h3>
       ${PROJEKTE.map(p => {
-        const n = projektZaehlung[p] || 0;
-        return `<div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--linie); font-size:14px">
-          <span style="font-weight:600">${esc(p)}</span>
-          <span style="font-weight:800; color:var(--wn-blau)">${n}</span>
+        const z = projektZaehlung[p]||{offen:0,behoben:0};
+        const ges = z.offen + z.behoben;
+        const max = Math.max(1, ...PROJEKTE.map(pp=>(projektZaehlung[pp]?.offen||0)+(projektZaehlung[pp]?.behoben||0)));
+        return `<div class="balken-zeile">
+          <div class="balken-label">
+            <span style="font-weight:700">${esc(p)}</span>
+            <span style="color:var(--schrift2)">${ges} Mängel · <span style="color:var(--wn-orange)">${z.offen} offen</span> · <span style="color:var(--wn-gruen)">${z.behoben} behoben</span></span>
+          </div>
+          <div class="balken-bg"><div class="balken-fill" style="width:${ges?Math.round(z.offen/max*100):0}%;background:var(--wn-orange)"></div></div>
         </div>`;
       }).join('')}
     </div>
 
+    <!-- Nach Firma -->
     <div class="karte">
-      <h3>Nach Mängelkategorie</h3>
+      <h3>Nach Firma</h3>
+      ${firmenSortiert.length ? firmenSortiert.map(([firma, z]) => {
+        const ges = z.offen + z.behoben;
+        return `<div class="balken-zeile">
+          <div class="balken-label">
+            <span style="font-weight:700">${esc(firma)}</span>
+            <span style="color:var(--schrift2)">${ges} · <span style="color:var(--wn-orange)">${z.offen} offen</span> · <span style="color:var(--wn-gruen)">${z.behoben} beh.</span></span>
+          </div>
+          <div class="balken-bg"><div class="balken-fill" style="width:${Math.round(ges/maxFirma*100)}%;background:var(--wn-blau)"></div></div>
+        </div>`;
+      }).join('') : '<div style="color:var(--schrift2);font-size:14px;padding:8px 0">Noch keine Firmendaten vorhanden</div>'}
+    </div>
+
+    <!-- Nach Kategorie -->
+    <div class="karte">
+      <h3>Nach Kategorie</h3>
       ${STANDARD_KATEGORIEN.map(k => {
-        const d = katZaehlung[k] || { offen: 0, behoben: 0 };
-        const gesKat = d.offen + d.behoben;
-        const farbe = MANGEL_FARBEN[k] || '#94a3b8';
-        return `<div style="margin-bottom:11px">
-          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px">
-            <span style="font-weight:600">${esc(k)}</span>
-            <span style="color:var(--schrift2)">${gesKat} (${d.offen} offen)</span>
+        const z = katZaehlung[k]||{offen:0,behoben:0};
+        const ges = z.offen + z.behoben;
+        if (!ges) return '';
+        const farbe = MANGEL_FARBEN[k]||'#003976';
+        return `<div class="balken-zeile">
+          <div class="balken-label">
+            <span style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${farbe}"></span>${esc(k)}</span>
+            <span style="color:var(--schrift2)">${ges} · <span style="color:var(--wn-orange)">${z.offen}</span> · <span style="color:var(--wn-gruen)">${z.behoben}</span></span>
           </div>
-          <div style="background:#f1f5f9; border-radius:5px; height:8px; overflow:hidden">
-            ${gesKat > 0 ? `<div style="background:${farbe}; height:100%; width:${Math.round(gesKat / maxKat * 100)}%; border-radius:5px; transition:width .3s"></div>` : ''}
-          </div>
+          <div class="balken-bg"><div class="balken-fill" style="width:${Math.round(ges/maxKat*100)}%;background:${farbe}"></div></div>
         </div>`;
       }).join('')}
     </div>
 
-    ${Object.keys(firmaZaehlung).length ? `<div class="karte">
-      <h3>Nach Firma</h3>
-      ${Object.entries(firmaZaehlung).sort((a, b) => b[1] - a[1]).map(([f, n]) => `
-        <div style="display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--linie); font-size:14px">
-          <span>${esc(f)}</span>
-          <span style="font-weight:700">${n}</span>
-        </div>`).join('')}
-    </div>` : ''}
+    <!-- Nach Ort -->
+    ${ortenGeordnet.length>0?`<div class="karte">
+      <h3>Nach Ort / Ortsteil</h3>
+      ${ortenGeordnet.map(([ort, n]) => `<div class="balken-zeile">
+        <div class="balken-label">
+          <span style="font-weight:700">${esc(ort)}</span>
+          <span style="color:var(--schrift2)">${n} Mängel</span>
+        </div>
+        <div class="balken-bg"><div class="balken-fill" style="width:${Math.round(n/ortenGeordnet[0][1]*100)}%;background:var(--wn-blau-mittel)"></div></div>
+      </div>`).join('')}
+    </div>`:''}`;
 
-    ${monateGeordnet.length > 1 ? `<div class="karte">
-      <h3>Mängel je Monat</h3>
-      ${monatsSvg(monateGeordnet.map(m => ({ label: m.slice(5) + '/' + m.slice(2, 4), anzahl: monatsDaten[m] })))}
-    </div>` : ''}
+  // Karte initiieren
+  setTimeout(() => {
+    const el = document.getElementById('uebersichtKarte');
+    if (!el || typeof L === 'undefined') return;
+    if (uebersichtKarteInstanz) { uebersichtKarteInstanz.remove(); uebersichtKarteInstanz = null; }
+    // Mittelpunkt NRW / Sauerland als Fallback
+    uebersichtKarteInstanz = L.map('uebersichtKarte').setView([51.4, 8.0], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:'© OpenStreetMap', maxZoom:19
+    }).addTo(uebersichtKarteInstanz);
 
-    <div class="btn-reihe" style="margin-top:4px">
-      <button class="btn btn-grau btn-sm" onclick="maengellistePDF()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Gesamtliste PDF
-      </button>
-      <button class="btn btn-grau btn-sm" onclick="mangelFilter={}; zeigeTab('logbuch'); csvExportieren()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        CSV Export
-      </button>
-    </div>`;
+    const mitGPS = mangelIndex.filter(e => e.lat && e.lng);
+    const bounds = [];
+    mitGPS.forEach(e => {
+      const farbe = MANGEL_FARBEN[e.kategorie] || '#003976';
+      const r = e.kritisch ? 10 : 7;
+      const marker = L.circleMarker([e.lat, e.lng], {
+        radius:r, color:'#fff', weight:1.5,
+        fillColor:farbe, fillOpacity:e.behoben?0.4:0.9
+      }).addTo(uebersichtKarteInstanz);
+      marker.bindPopup(`<b>${esc(e.kategorie||'Mangel')}</b><br>${esc(e.projekt||'')}${e.ort?' · '+esc(e.ort):''}${e.behoben?' · <span style="color:#00843d">Behoben</span>':e.kritisch?' · <span style="color:#e4001b">KRITISCH</span>':''}`);
+      bounds.push([e.lat, e.lng]);
+    });
+    if (bounds.length > 0) {
+      uebersichtKarteInstanz.fitBounds(bounds, { padding:[30,30] });
+    }
+    setTimeout(() => uebersichtKarteInstanz.invalidateSize(), 200);
+  }, 60);
 }
 
-function monatsSvg(daten) {
-  const max = Math.max(1, ...daten.map(d => d.anzahl));
-  const h = 90, oben = 8, unten = 20;
-  const nutzH = h - oben - unten;
-  const breite = 300;
-  const schritt = breite / daten.length;
-  const bBreite = Math.min(32, schritt - 8);
-  let svg = `<svg viewBox="0 0 ${breite} ${h}" width="100%" style="display:block">`;
-  daten.forEach((d, i) => {
-    const bh = Math.round(nutzH * d.anzahl / max);
-    const x = i * schritt + (schritt - bBreite) / 2;
-    const y = oben + (nutzH - bh);
-    svg += `<rect x="${x}" y="${y}" width="${bBreite}" height="${Math.max(bh, 2)}" rx="3" fill="#003976"/>`;
-    svg += `<text x="${x + bBreite / 2}" y="${h - 4}" font-size="9" fill="#94a3b8" text-anchor="middle">${esc(d.label)}</text>`;
-    svg += `<text x="${x + bBreite / 2}" y="${y - 3}" font-size="10" fill="#374151" text-anchor="middle">${d.anzahl}</text>`;
-  });
-  svg += '</svg>';
-  return svg;
-}
-
-// ===== STAMMDATEN =====
+// Stammdaten
 function zeichneStammdaten() {
   document.getElementById('app').innerHTML = `
-    <h2>Stammdaten</h2>
-
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:14px;color:var(--wn-blau)">Stammdaten</h2>
     <div class="karte">
-      <h3>Projekte</h3>
-      <div style="display:flex; flex-wrap:wrap; gap:6px; padding:4px 0">
-        ${PROJEKTE.map(p => `<span class="projekt-chip" style="font-size:13px">${esc(p)}</span>`).join('')}
+      <h3>Tiefbaufirmen</h3>
+      <div class="chip-liste" id="firmen-liste">
+        ${stammdaten.firmen.map((f,i)=>`<div class="chip">${esc(f)}<button class="chip-loeschen" onclick="firmLoeschen(${i})" title="Entfernen">&#x2715;</button></div>`).join('')}
       </div>
-      <div class="aktion-info" style="margin-top:8px">Projekte sind fest vorgegeben und können nicht geändert werden</div>
-    </div>
-
-    <div class="karte">
-      <h3>Mängelkategorien</h3>
-      <div style="display:flex; flex-wrap:wrap; gap:6px; padding:4px 0">
-        ${STANDARD_KATEGORIEN.map(k => `<div class="stamm-chip" style="background:#fef3c7; color:#92400e; border-color:#fcd34d">${esc(k)}</div>`).join('')}
-      </div>
-      <div class="aktion-info" style="margin-top:8px">Kategorien sind fest vorgegeben</div>
-    </div>
-
-    <div class="karte">
-      <h3>Maßnahmen</h3>
-      <div style="display:flex; flex-direction:column; gap:5px; padding:4px 0">
-        ${STANDARD_AKTIONEN.map(a => `<div class="stamm-chip" style="border-radius:6px">${esc(a)}</div>`).join('')}
-      </div>
-      <div class="aktion-info" style="margin-top:8px">Maßnahmen sind fest vorgegeben</div>
-    </div>
-
-    <div class="karte">
-      <h3>Firmen (Tiefbau / Subunternehmer)</h3>
-      <div class="stamm-chip-liste" id="firmen-liste">
-        ${stammdaten.firmen.map(f => `<div class="stamm-chip">${esc(f)}<button onclick="stammLoeschen('firmen','${esc(f)}')" title="Entfernen">&#x2715;</button></div>`).join('')}
-      </div>
-      <div class="stamm-add-reihe">
-        <input type="text" id="firma-neu" placeholder="Firmenname eingeben">
-        <button class="btn btn-blau btn-sm" onclick="stammHinzufuegen('firmen','firma-neu')">+ Hinzufügen</button>
+      <div class="neu-eingabe">
+        <input type="text" id="neueFirma" placeholder="Neue Firma…" onkeydown="if(event.key==='Enter')firmaHinzufuegen()">
+        <button class="btn btn-blau btn-sm" onclick="firmaHinzufuegen()">Hinzufügen</button>
       </div>
     </div>
-
     <div class="karte">
-      <h3>Projektleiter / Erfasser</h3>
-      <div class="stamm-chip-liste" id="pl-liste">
-        ${stammdaten.projektleiter.map(p => `<div class="stamm-chip">${esc(p)}<button onclick="stammLoeschen('projektleiter','${esc(p)}')" title="Entfernen">&#x2715;</button></div>`).join('')}
+      <h3>Projektleiter</h3>
+      <div class="chip-liste" id="pl-liste">
+        ${stammdaten.projektleiter.map((p,i)=>`<div class="chip">${esc(p)}<button class="chip-loeschen" onclick="plLoeschen(${i})" title="Entfernen">&#x2715;</button></div>`).join('')}
       </div>
-      <div class="stamm-add-reihe">
-        <input type="text" id="pl-neu" placeholder="Name Projektleiter">
-        <button class="btn btn-blau btn-sm" onclick="stammHinzufuegen('projektleiter','pl-neu')">+ Hinzufügen</button>
+      <div class="neu-eingabe">
+        <input type="text" id="neuerPL" placeholder="Neuer Projektleiter…" onkeydown="if(event.key==='Enter')plHinzufuegen()">
+        <button class="btn btn-blau btn-sm" onclick="plHinzufuegen()">Hinzufügen</button>
       </div>
     </div>
-
-    <div class="karte" style="border-left:3px solid var(--wn-blau-hell)">
-      <h3>Abmelden</h3>
-      <button class="btn btn-grau" onclick="abmelden()" style="margin-top:4px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        App abmelden
-      </button>
+    <div class="karte" style="background:var(--wn-grau-hell);border:1.5px solid var(--wn-grau-rand)">
+      <h3>Hinweis</h3>
+      <div style="font-size:14px;line-height:1.6;color:var(--schrift2)">Stammdaten werden in der Datenbank gespeichert und sind für alle Nutzer sichtbar. Einmalig anlegen genügt.</div>
     </div>`;
-
-  // Enter-Taste in Feldern
-  ['firma-neu', 'pl-neu'].forEach(id => {
-    const felder = { 'firma-neu': 'firmen', 'pl-neu': 'projektleiter' };
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('keydown', e => { if (e.key === 'Enter') stammHinzufuegen(felder[id], id); });
-  });
 }
 
-async function stammHinzufuegen(liste, feldId) {
-  const el = document.getElementById(feldId);
-  const wert = el ? el.value.trim() : '';
-  if (!wert) return;
-  if (!stammdaten[liste]) stammdaten[liste] = [];
-  if (stammdaten[liste].includes(wert)) { meldung('Bereits vorhanden'); return; }
-  stammdaten[liste].push(wert);
-  stammdaten[liste].sort();
+async function firmaHinzufuegen() {
+  const el = document.getElementById('neueFirma');
+  const name = el.value.trim();
+  if (!name) return;
+  if (stammdaten.firmen.includes(name)) { meldung('Firma bereits vorhanden'); return; }
+  stammdaten.firmen.push(name);
   await stammdatenSpeichern();
-  if (el) el.value = '';
-  zeichneStammdaten();
-  meldung('Gespeichert');
-}
-
-async function stammLoeschen(liste, wert) {
-  stammdaten[liste] = (stammdaten[liste] || []).filter(x => x !== wert);
-  await stammdatenSpeichern();
+  el.value = '';
+  meldung('Firma hinzugefügt');
   zeichneStammdaten();
 }
 
-function abmelden() {
-  bestaetigung('App abmelden', 'Möchten Sie sich wirklich abmelden?', 'Abmelden', () => {
-    localStorage.removeItem('maengel_auth');
-    location.reload();
+async function firmLoeschen(i) {
+  stammdaten.firmen.splice(i, 1);
+  await stammdatenSpeichern();
+  meldung('Firma entfernt');
+  zeichneStammdaten();
+}
+
+async function plHinzufuegen() {
+  const el = document.getElementById('neuerPL');
+  const name = el.value.trim();
+  if (!name) return;
+  if (stammdaten.projektleiter.includes(name)) { meldung('Projektleiter bereits vorhanden'); return; }
+  stammdaten.projektleiter.push(name);
+  await stammdatenSpeichern();
+  el.value = '';
+  meldung('Projektleiter hinzugefügt');
+  zeichneStammdaten();
+}
+
+async function plLoeschen(i) {
+  stammdaten.projektleiter.splice(i, 1);
+  await stammdatenSpeichern();
+  meldung('Projektleiter entfernt');
+  zeichneStammdaten();
+}
+
+// PDF Export
+async function mangelPDF() {
+  const m = ansichtMangel;
+  meldung('PDF wird erstellt…');
+  const bereich = document.getElementById('druckBereich');
+  bereich.innerHTML = `
+    <div class="druck-kopf">Mangel · ${esc(m.kategorie||'Eintrag')}</div>
+    <table class="druck-info">
+      <tr><td>Status</td><td>${m.behoben?'Behoben':(m.kritisch?'KRITISCH':'Offen')}</td></tr>
+      <tr><td>Art</td><td>${esc(m.mangelTyp||'–')}</td></tr>
+      <tr><td>Kategorie</td><td>${esc(m.kategorie||'–')}</td></tr>
+      <tr><td>Maßnahme</td><td>${esc(m.aktion||'–')}</td></tr>
+      <tr><td>Projekt</td><td>${esc(m.projekt||'–')}</td></tr>
+      <tr><td>Tiefbaufirma</td><td>${esc(m.firma||'–')}</td></tr>
+      <tr><td>Subunternehmer</td><td>${m.keinSubunternehmer?'Keiner':esc(m.subunternehmer||'–')}</td></tr>
+      <tr><td>Erfasst durch</td><td>${esc(m.eintrager||'–')}</td></tr>
+      <tr><td>Datum</td><td>${datumSchoen(m.datum)}</td></tr>
+      ${(m.strasse||m.ort)?`<tr><td>Standort</td><td>${esc([m.strasse,m.ort].filter(Boolean).join(', '))}</td></tr>`:''}
+      ${m.lat?`<tr><td>GPS</td><td>${m.lat}, ${m.lng}</td></tr>`:''}
+    </table>
+    ${m.kommentar?`<div class="druck-kommentar"><b>Beschreibung:</b> ${esc(m.kommentar)}</div>`:''}
+    ${m.fotos&&m.fotos.length?`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">
+      ${m.fotos.map(f=>`<img class="druck-foto" src="${f}">`).join('')}
+    </div>`:''}`;
+  await druckStarten(bereich, 'Mangel_'+(m.kategorie||'Eintrag').replace(/\s+/g,'_')+'_'+m.datum+'.pdf');
+}
+
+async function maengellistePDF() {
+  const gefiltert = mangelIndexGefiltert();
+  if (!gefiltert.length) { meldung('Keine Mängel in der Auswahl'); return; }
+  meldung('PDF wird vorbereitet…');
+  const volle = [];
+  for (const e of gefiltert) {
+    const m = await speicherHolen('mangel:'+e.id);
+    if (!m) continue;
+    m.fotos = [];
+    for (let i = 0; i < (m.fotoAnzahl||0); i++) {
+      const f = await speicherHolen('mangelfoto:'+e.id+':'+i);
+      if (f) m.fotos.push(f.daten);
+    }
+    volle.push(m);
+  }
+  const bereich = document.getElementById('druckBereich');
+  let html = `<div class="druck-kopf">Mängelliste – Westnetz GmbH</div>
+    <table class="druck-info">
+      <tr><td>Erstellt am</td><td>${datumSchoen(heute())}</td></tr>
+      <tr><td>Mängel gesamt</td><td>${volle.length}</td></tr>
+      <tr><td>Offen</td><td>${volle.filter(m=>!m.behoben).length}</td></tr>
+      <tr><td>Behoben</td><td>${volle.filter(m=>m.behoben).length}</td></tr>
+    </table>`;
+  volle.forEach((m,i) => {
+    html += `<hr class="druck-trenner">
+      <div style="font-size:14px;font-weight:700;margin-bottom:6px">${i+1}. ${esc(m.kategorie||'ohne Kategorie')} · ${m.behoben?'Behoben':(m.kritisch?'KRITISCH':'Offen')}</div>
+      <table class="druck-info">
+        <tr><td>Art</td><td>${esc(m.mangelTyp||'–')}</td></tr>
+        <tr><td>Maßnahme</td><td>${esc(m.aktion||'–')}</td></tr>
+        <tr><td>Projekt</td><td>${esc(m.projekt||'–')}</td></tr>
+        <tr><td>Tiefbaufirma</td><td>${esc(m.firma||'–')}</td></tr>
+        <tr><td>Erfasst durch</td><td>${esc(m.eintrager||'–')}</td></tr>
+        <tr><td>Datum</td><td>${datumSchoen(m.datum)}</td></tr>
+        ${(m.strasse||m.ort)?`<tr><td>Standort</td><td>${esc([m.strasse,m.ort].filter(Boolean).join(', '))}</td></tr>`:''}
+      </table>
+      ${m.kommentar?`<div class="druck-kommentar">${esc(m.kommentar)}</div>`:''}
+      ${m.fotos&&m.fotos.length?`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+        ${m.fotos.map(f=>`<img class="druck-foto" style="width:140px;height:140px" src="${f}">`).join('')}
+      </div>`:''}`;
   });
+  bereich.innerHTML = html;
+  await druckStarten(bereich, 'Maengelliste_'+heute()+'.pdf');
 }
 
-// ===== APP START =====
-async function app_start() {
-  meldung('Verbindung wird hergestellt…');
-  await stammdatenLaden();
-  await mangelIndexLaden();
-  echtzeitStarten();
-  zeichneAktuellenTab();
+async function druckStarten(bereich, dateiname) {
+  try {
+    const bilder = [...bereich.querySelectorAll('img')];
+    await Promise.all(bilder.map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload=r; img.onerror=r; })));
+    const { jsPDF } = window.jspdf;
+    const canvas = await html2canvas(bereich, { backgroundColor:'#ffffff', scale:2, useCORS:true });
+    const imgData = canvas.toDataURL('image/jpeg', 0.9);
+    const pdf = new jsPDF({ unit:'mm', format:'a4' });
+    const hoehe = Math.round(canvas.height * 190 / canvas.width);
+    const seitenHoehe = 277;
+    if (hoehe <= seitenHoehe) {
+      pdf.addImage(imgData, 'JPEG', 10, 10, 190, hoehe);
+    } else {
+      let verbleibend = hoehe, yOffset = 0;
+      while (verbleibend > 0) {
+        const teil = Math.min(seitenHoehe, verbleibend);
+        const anteil = teil / hoehe;
+        const teilCanvas = document.createElement('canvas');
+        teilCanvas.width = canvas.width;
+        teilCanvas.height = Math.round(canvas.height * anteil);
+        teilCanvas.getContext('2d').drawImage(canvas, 0, Math.round(yOffset/hoehe*canvas.height), canvas.width, teilCanvas.height, 0, 0, canvas.width, teilCanvas.height);
+        if (yOffset > 0) pdf.addPage();
+        pdf.addImage(teilCanvas.toDataURL('image/jpeg', 0.9), 'JPEG', 10, 10, 190, teil);
+        yOffset += teil; verbleibend -= teil;
+      }
+    }
+    const pdfBlob = pdf.output('blob');
+    try {
+      const downloads = await claude.use('downloads');
+      await downloads.save({ filename:dateiname, data:pdfBlob });
+      meldung('PDF gespeichert');
+    } catch(e) {
+      pdf.save(dateiname);
+      meldung('PDF gespeichert');
+    }
+  } catch(err) {
+    meldung('PDF-Fehler: '+err.message);
+  }
 }
 
-// Passwort prüfen beim Laden
-if (localStorage.getItem('maengel_auth') === 'ja') {
-  document.getElementById('pw-screen').classList.remove('aktiv');
-  app_start();
+// Bild teilen
+async function mangelAlsBildTeilen() {
+  const m = ansichtMangel;
+  meldung('Bild wird vorbereitet…');
+  const karte = document.createElement('div');
+  karte.style.cssText = 'position:fixed;left:-9999px;top:0;width:600px;background:#fff;padding:28px;font-family:Arial,sans-serif;border-radius:12px;color:#000';
+  const farbe = m.behoben ? '#00843d' : (m.kritisch ? '#e4001b' : '#e87722');
+  karte.innerHTML = `
+    <div style="font-size:11px;color:#9ca3af;margin-bottom:12px">Mängelerfassung · Westnetz GmbH</div>
+    <div style="font-size:22px;font-weight:800;margin-bottom:4px">Ausführungsmangel</div>
+    <div style="font-size:17px;font-weight:700;color:${farbe};margin-bottom:14px">${esc(m.kategorie||'–')}</div>
+    <table style="width:100%;font-size:14px;border-collapse:collapse">
+      <tr><td style="padding:4px 0;color:#6b7280;width:40%">Maßnahme</td><td style="font-weight:600">${esc(m.aktion||'–')}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b7280">Tiefbaufirma</td><td style="font-weight:600">${esc(m.firma||'–')}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b7280">Projekt</td><td style="font-weight:600">${esc(m.projekt||'–')}</td></tr>
+      <tr><td style="padding:4px 0;color:#6b7280">Datum</td><td style="font-weight:600">${datumSchoen(m.datum)}</td></tr>
+      ${(m.strasse||m.ort)?`<tr><td style="padding:4px 0;color:#6b7280">Standort</td><td style="font-weight:600">${esc([m.strasse,m.ort].filter(Boolean).join(', '))}</td></tr>`:''}
+    </table>
+    ${m.kommentar?`<div style="margin-top:14px;padding:12px;background:#f9fafb;border-radius:8px;font-size:14px;line-height:1.5">${esc(m.kommentar)}</div>`:''}
+    ${m.fotos&&m.fotos.length?`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
+      ${m.fotos.slice(0,4).map(f=>`<img src="${f}" style="width:160px;height:160px;object-fit:cover;border-radius:8px">`).join('')}
+    </div>`:''}`;
+  document.body.appendChild(karte);
+  const bilder = [...karte.querySelectorAll('img')];
+  await Promise.all(bilder.map(img => img.complete?Promise.resolve():new Promise(r=>{img.onload=r;img.onerror=r;})));
+  try {
+    const canvas = await html2canvas(karte, { backgroundColor:'#ffffff', scale:2 });
+    document.body.removeChild(karte);
+    canvas.toBlob(async blob => {
+      if (!blob) { meldung('Bild konnte nicht erstellt werden'); return; }
+      const name = 'Mangel_'+(m.kategorie||'Eintrag').replace(/\s+/g,'_')+'_'+m.datum+'.png';
+      const datei = new File([blob], name, { type:'image/png' });
+      if (navigator.canShare && navigator.canShare({ files:[datei] })) {
+        try { await navigator.share({ files:[datei], title:'Mangel '+(m.kategorie||'') }); }
+        catch(e) { if (e.name !== 'AbortError') meldung('Teilen abgebrochen'); }
+      } else {
+        try {
+          const downloads = await claude.use('downloads');
+          await downloads.save({ filename:name, data:blob });
+          meldung('Bild heruntergeladen');
+        } catch(e) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href=url; a.download=name;
+          document.body.appendChild(a); a.click(); a.remove();
+          URL.revokeObjectURL(url);
+          meldung('Bild heruntergeladen');
+        }
+      }
+    }, 'image/png');
+  } catch(err) {
+    if (document.body.contains(karte)) document.body.removeChild(karte);
+    meldung('Fehler: '+err.message);
+  }
 }
+
+// CSV Export
+async function csvExportieren() {
+  const gefiltert = mangelIndexGefiltert();
+  if (!gefiltert.length) { meldung('Keine Mängel zum Export'); return; }
+  meldung('CSV wird erstellt…');
+  const spalten = ['Art','Kategorie','Maßnahme','Projekt','Status','Tiefbaufirma','Subunternehmer','Erfasst durch','Datum','Uhrzeit','Straße','Ort','GPS Lat','GPS Lng','Fotos','Behoben am','Beschreibung'];
+  const zeilen = [spalten.join(';')];
+  for (const e of gefiltert) {
+    const m = await speicherHolen('mangel:'+e.id);
+    zeilen.push([
+      e.mangelTyp||'', e.kategorie||'', e.aktion||'', e.projekt||'',
+      e.behoben?'Behoben':'Offen',
+      e.firma||'', e.keinSubunternehmer?'Keiner':(e.subunternehmer||''),
+      e.eintrager||'', e.datum||'', zeitSchoen(e.gespeichertAm),
+      e.strasse||'', e.ort||'', e.lat??'', e.lng??'',
+      e.fotoAnzahl??0,
+      e.behobenAm?datumSchoen(e.behobenAm.slice(0,10)):'',
+      m?(m.kommentar||''):''
+    ].map(csvFeld).join(';'));
+  }
+  const inhalt = '﻿'+zeilen.join('\r\n');
+  const blob = new Blob([inhalt], { type:'text/csv;charset=utf-8;' });
+  try {
+    const downloads = await claude.use('downloads');
+    await downloads.save({ filename:'Maengelliste_'+heute()+'.csv', data:blob });
+    meldung('CSV erstellt');
+  } catch(e) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href=url; a.download='Maengelliste_'+heute()+'.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    meldung('CSV erstellt');
+  }
+}
+
+// App starten – kein Passwort mehr
+app_start();
 </script>
 </body>
 </html>
