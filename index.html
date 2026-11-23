@@ -38,11 +38,11 @@ html,body{height:100%;overflow:hidden}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--schrift);font-size:15px;display:flex;flex-direction:column}
 
 /* Header */
-.header{background:var(--wn-blau);color:#fff;padding:0 16px;display:flex;align-items:center;gap:12px;height:56px;flex-shrink:0;position:sticky;top:0;z-index:900}
-.header-logo{display:flex;align-items:center;gap:10px}
-.header-logo svg{flex-shrink:0}
-.header-title{font-size:15px;font-weight:700;letter-spacing:.01em;line-height:1.2}
-.header-sub{font-size:11px;opacity:.75;font-weight:400}
+.header{background:#fff;color:var(--schrift);padding:0 16px;display:flex;align-items:center;gap:12px;height:56px;flex-shrink:0;position:sticky;top:0;z-index:900;border-bottom:2px solid var(--linie)}
+.header-logo{display:flex;align-items:center}
+.wn-logo-text{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1}
+.wn-logo-west{color:#78be20}
+.wn-logo-netz{color:#6e7275}
 .online-punkt{width:8px;height:8px;border-radius:50%;background:#4ade80;margin-left:auto;flex-shrink:0;transition:background .4s}
 
 /* Navigation */
@@ -212,16 +212,8 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
 <div class="header">
   <div class="header-logo">
-    <!-- Westnetz Logo als SVG -->
-    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="34" height="34" rx="6" fill="#fff"/>
-      <path d="M5 9h4.5l3.5 10 3.5-10H20l3.5 10 3.5-10H31" stroke="#003976" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      <path d="M5 20h24" stroke="#e4001b" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <div>
-      <div class="header-title">Mängelerfassung</div>
-      <div class="header-sub">Westnetz GmbH – Insolvenzfall</div>
-    </div>
+    <!-- Westnetz Logo: grünes west + graues netz, wie Original -->
+    <span class="wn-logo-text"><span class="wn-logo-west">west</span><span class="wn-logo-netz">netz</span></span>
   </div>
   <div id="online-punkt" class="online-punkt" title="Verbindungsstatus"></div>
 </div>
@@ -327,13 +319,34 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 function csvFeld(v) { const s=String(v||''); return s.includes(';')||s.includes('"')||s.includes('\n') ? '"'+s.replace(/"/g,'""')+'"' : s; }
 
 // Meldung anzeigen
-function meldung(text) {
+function meldung(text, typ) {
+  // typ: 'ok' = grün, sonst blau
   const el = document.getElementById('meldung');
   el.textContent = text;
+  el.style.background = typ === 'ok' ? 'var(--wn-gruen)' : 'var(--wn-blau)';
   el.classList.add('sichtbar');
   if (meldungTimer) clearTimeout(meldungTimer);
   if (text) meldungTimer = setTimeout(() => el.classList.remove('sichtbar'), 3000);
   else el.classList.remove('sichtbar');
+}
+
+// Adresse von Koordinaten ermitteln via Nominatim
+async function reverseGeocode(lat, lng) {
+  try {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
+      { headers: { 'Accept-Language': 'de' } }
+    );
+    const d = await r.json();
+    const a = d.address || {};
+    // Straße mit Hausnummer zusammensetzen
+    const strasse = [a.road, a.house_number].filter(Boolean).join(' ');
+    // Ort: Ortsteil oder Gemeinde oder Stadt
+    const ort = a.village || a.suburb || a.town || a.city || a.municipality || '';
+    return { strasse, ort };
+  } catch(e) {
+    return null;
+  }
 }
 
 // Vollbild Bild
@@ -553,9 +566,15 @@ function zeichneMangel() {
 function karteOeffnenOderGPS() {
   if (navigator.geolocation) {
     meldung('GPS wird ermittelt…');
-    navigator.geolocation.getCurrentPosition(pos => {
+    navigator.geolocation.getCurrentPosition(async pos => {
       mangelEntwurf.lat = parseFloat(pos.coords.latitude.toFixed(6));
       mangelEntwurf.lng = parseFloat(pos.coords.longitude.toFixed(6));
+      // Adresse automatisch befüllen
+      const geo = await reverseGeocode(mangelEntwurf.lat, mangelEntwurf.lng);
+      if (geo) {
+        if (!mangelEntwurf.strasse && geo.strasse) mangelEntwurf.strasse = geo.strasse;
+        if (!mangelEntwurf.ort && geo.ort) mangelEntwurf.ort = geo.ort;
+      }
       zeichneMangel();
       setTimeout(() => karteInitiieren(), 100);
     }, () => {
@@ -586,16 +605,30 @@ function karteInitiieren() {
       mangelEntwurf.lng = parseFloat(p.lng.toFixed(6));
     });
   }
-  karteInstanz.on('click', e => {
+  karteInstanz.on('click', async e => {
     mangelEntwurf.lat = parseFloat(e.latlng.lat.toFixed(6));
     mangelEntwurf.lng = parseFloat(e.latlng.lng.toFixed(6));
     if (karteMarker) karteInstanz.removeLayer(karteMarker);
     karteMarker = L.marker([mangelEntwurf.lat, mangelEntwurf.lng], { draggable:true }).addTo(karteInstanz);
-    karteMarker.on('dragend', ev => {
+    karteMarker.on('dragend', async ev => {
       const p = ev.target.getLatLng();
       mangelEntwurf.lat = parseFloat(p.lat.toFixed(6));
       mangelEntwurf.lng = parseFloat(p.lng.toFixed(6));
+      // Adresse nach Drag aktualisieren
+      const geo = await reverseGeocode(mangelEntwurf.lat, mangelEntwurf.lng);
+      if (geo) {
+        mangelEntwurf.strasse = geo.strasse;
+        mangelEntwurf.ort = geo.ort;
+        zeichneMangel();
+      }
     });
+    // Adresse sofort befüllen nach Klick
+    const geo = await reverseGeocode(mangelEntwurf.lat, mangelEntwurf.lng);
+    if (geo) {
+      mangelEntwurf.strasse = geo.strasse;
+      mangelEntwurf.ort = geo.ort;
+      zeichneMangel();
+    }
   });
   setTimeout(() => karteInstanz.invalidateSize(), 200);
 }
@@ -670,7 +703,8 @@ async function mangelSpeichern() {
   };
   await speicherSetzen('mangelindex:'+m.id, meta);
   mangelIndex.unshift(meta);
-  meldung('Mangel gespeichert');
+  // Grüne Bestätigung beim Speichern
+  meldung('✓ Mangel erfolgreich gespeichert', 'ok');
   mangelZuruecksetzen();
   zeigeTab('logbuch');
 }
