@@ -293,6 +293,11 @@ let aktiverTab = 'mangel';
 let karteInstanz = null;
 let karteMarker = null;
 let uebersichtKarteInstanz = null;
+let polygonModus = null; // aktiver Polygon-Typ beim Zeichnen
+let polygonPunkte = []; // Punkte des aktuell gezeichneten Polygons
+let polygonTempLayer = null; // temporäre Linie beim Zeichnen
+let polygonLayer = null; // Leaflet LayerGroup für alle Polygone
+let polygonListe = []; // alle gespeicherten Polygone (lokal)
 let meldungTimer = null;
 
 // Mängel Entwurf
@@ -306,6 +311,8 @@ function neuerMangelEntwurf() {
   };
 }
 let mangelEntwurf = neuerMangelEntwurf();
+let bearbeitenModus = false; // true wenn bestehender Mangel bearbeitet wird
+let bearbeitenAltDaten = null; // Snapshot vor Bearbeitung für Log
 
 // Filter
 let mangelFilter = { kategorie:'',firma:'',eintrager:'',status:'',projekt:'',mangelTyp:'',von:'',bis:'' };
@@ -452,7 +459,8 @@ function zeichneAktuellenTab() {
 function zeichneMangel() {
   const m = mangelEntwurf;
   document.getElementById('app').innerHTML = `
-    <h2 style="font-size:18px;font-weight:800;margin-bottom:14px;color:var(--wn-blau)">Neuer Mangel erfassen</h2>
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:14px;color:var(--wn-blau)">${bearbeitenModus ? 'Mangel bearbeiten' : 'Neuer Mangel erfassen'}</h2>
+    ${bearbeitenModus ? `<div style="background:var(--wn-orange);color:#fff;padding:8px 12px;border-radius:var(--radius-s);font-size:13px;font-weight:600;margin-bottom:12px">Bearbeitungsmodus – Änderungen werden geloggt</div>` : ''}
 
     <div class="karte">
       <h3>Art des Mangels</h3>
@@ -563,11 +571,14 @@ function zeichneMangel() {
       </div>
     </div>
 
-    <button class="btn btn-blau" onclick="mangelSpeichern()" style="font-size:17px;padding:16px;margin-bottom:4px">
+    <button class="btn btn-blau" onclick="${bearbeitenModus ? 'mangelBearbeitenSpeichern()' : 'mangelSpeichern()'}" style="font-size:17px;padding:16px;margin-bottom:4px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      Mangel speichern
+      ${bearbeitenModus ? 'Änderungen speichern' : 'Mangel speichern'}
     </button>
-    <button class="btn btn-grau" onclick="mangelZuruecksetzen()">Formular zurücksetzen</button>`;
+    ${bearbeitenModus
+      ? `<button class="btn btn-grau" onclick="bearbeitenAbbrechen()">Bearbeiten abbrechen</button>`
+      : `<button class="btn btn-grau" onclick="mangelZuruecksetzen()">Formular zurücksetzen</button>`
+    }`;
 
   if (m.lat) setTimeout(() => karteInitiieren(), 100);
 }
@@ -620,6 +631,18 @@ async function adresseAufKarteSuchen() {
 // Rückwärts-Kompatibilität: alter Aufruf
 function karteOeffnenOderGPS() { gpsErmitteln(); }
 
+// Leaflet Marker-Icon fix für GitHub Pages (kein relativer Pfad)
+const PIN_ICON = L.divIcon({
+  className: '',
+  html: `<svg width="28" height="40" viewBox="0 0 28 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14 0C6.27 0 0 6.27 0 14c0 9.5 14 26 14 26s14-16.5 14-26C28 6.27 21.73 0 14 0z" fill="#003976" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="14" cy="14" r="6" fill="#fff"/>
+  </svg>`,
+  iconSize: [28, 40],
+  iconAnchor: [14, 40],
+  popupAnchor: [0, -40]
+});
+
 function karteInitiieren() {
   const el = document.getElementById('karteWahl');
   if (!el) return;
@@ -632,7 +655,7 @@ function karteInitiieren() {
     attribution:'© OpenStreetMap', maxZoom:19
   }).addTo(karteInstanz);
   if (mangelEntwurf.lat) {
-    karteMarker = L.marker([lat, lng], { draggable:true }).addTo(karteInstanz);
+    karteMarker = L.marker([lat, lng], { draggable:true, icon:PIN_ICON }).addTo(karteInstanz);
     karteMarker.on('dragend', e => {
       const p = e.target.getLatLng();
       mangelEntwurf.lat = parseFloat(p.lat.toFixed(6));
@@ -643,7 +666,7 @@ function karteInitiieren() {
     mangelEntwurf.lat = parseFloat(e.latlng.lat.toFixed(6));
     mangelEntwurf.lng = parseFloat(e.latlng.lng.toFixed(6));
     if (karteMarker) karteInstanz.removeLayer(karteMarker);
-    karteMarker = L.marker([mangelEntwurf.lat, mangelEntwurf.lng], { draggable:true }).addTo(karteInstanz);
+    karteMarker = L.marker([mangelEntwurf.lat, mangelEntwurf.lng], { draggable:true, icon:PIN_ICON }).addTo(karteInstanz);
     karteMarker.on('dragend', async ev => {
       const p = ev.target.getLatLng();
       mangelEntwurf.lat = parseFloat(p.lat.toFixed(6));
@@ -746,8 +769,177 @@ async function mangelSpeichern() {
 function mangelZuruecksetzen() {
   if (karteInstanz) { karteInstanz.remove(); karteInstanz = null; }
   karteMarker = null;
+  bearbeitenModus = false;
+  bearbeitenAltDaten = null;
   mangelEntwurf = neuerMangelEntwurf();
   zeichneMangel();
+}
+
+// Bearbeiten-Modus starten: Felder aus ansichtMangel in Entwurf laden
+function mangelBearbeitenStarten() {
+  const m = ansichtMangel;
+  if (!m) return;
+  // Snapshot für Änderungslog
+  bearbeitenAltDaten = { ...m, fotos: [] };
+  bearbeitenModus = true;
+  if (karteInstanz) { karteInstanz.remove(); karteInstanz = null; }
+  karteMarker = null;
+  // Felder ins Formular laden
+  mangelEntwurf = {
+    id: m.id,
+    mangelTyp: m.mangelTyp || '',
+    kategorie: m.kategorie || '',
+    aktion: m.aktion || '',
+    projekt: m.projekt || '',
+    firma: m.firma || '',
+    subunternehmer: m.subunternehmer || '',
+    keinSubunternehmer: m.keinSubunternehmer || false,
+    eintrager: m.eintrager || '',
+    datum: m.datum || heute(),
+    kritisch: m.kritisch || false,
+    kommentar: m.kommentar || '',
+    strasse: m.strasse || '',
+    ort: m.ort || '',
+    lat: m.lat || null,
+    lng: m.lng || null,
+    fotos: m.fotos ? [...m.fotos] : [],
+    gespeichertAm: m.gespeichertAm,
+    behoben: m.behoben || false,
+    behobenAm: m.behobenAm || null,
+    fotoAnzahl: m.fotoAnzahl || 0
+  };
+  zeigeTab('mangel');
+}
+
+// Bearbeiten abbrechen ohne zu speichern
+function bearbeitenAbbrechen() {
+  bearbeitenModus = false;
+  bearbeitenAltDaten = null;
+  if (karteInstanz) { karteInstanz.remove(); karteInstanz = null; }
+  karteMarker = null;
+  mangelEntwurf = neuerMangelEntwurf();
+  if (ansichtMangel) {
+    zeigeTab('logbuch');
+  } else {
+    zeichneMangel();
+  }
+}
+
+// Geänderte Felder ermitteln
+function aenderungenErmitteln(alt, neu) {
+  const felder = {
+    mangelTyp: 'Art', kategorie: 'Kategorie', aktion: 'Maßnahme',
+    projekt: 'Projekt', firma: 'Tiefbaufirma', subunternehmer: 'Subunternehmer',
+    keinSubunternehmer: 'Kein Subunternehmer', eintrager: 'Erfasst durch',
+    datum: 'Datum', kritisch: 'Kritisch', kommentar: 'Beschreibung',
+    strasse: 'Straße', ort: 'Ort', lat: 'GPS Lat', lng: 'GPS Lng'
+  };
+  const aenderungen = [];
+  for (const [key, label] of Object.entries(felder)) {
+    const a = alt[key] ?? null;
+    const n = neu[key] ?? null;
+    if (String(a) !== String(n)) {
+      aenderungen.push({ feld: label, alt: a, neu: n });
+    }
+  }
+  return aenderungen;
+}
+
+// Geänderte Version speichern mit Änderungslog
+async function mangelBearbeitenSpeichern() {
+  const m = mangelEntwurf;
+  if (!m.mangelTyp) { meldung('Bitte Art des Mangels wählen'); return; }
+  if (!m.kategorie) { meldung('Bitte Mängelkategorie wählen'); return; }
+  if (!m.aktion) { meldung('Bitte Maßnahme wählen'); return; }
+  if (!m.projekt) { meldung('Bitte Projekt wählen'); return; }
+  if (!m.firma) { meldung('Bitte Tiefbaufirma wählen'); return; }
+  if (!m.keinSubunternehmer && !m.subunternehmer) { meldung('Bitte Subunternehmer wählen oder "Kein Subunternehmer" ankreuzen'); return; }
+  if (!m.eintrager) { meldung('Bitte "Erfasst durch" wählen'); return; }
+
+  // Bearbeiter fragen
+  const bearbeiter = prompt('Wer bearbeitet? (Dein Name für den Log)') || m.eintrager;
+
+  meldung('Änderungen werden gespeichert…');
+  const jetzt = new Date().toISOString();
+  const aenderungen = aenderungenErmitteln(bearbeitenAltDaten, m);
+
+  // Mangel-Dokument aktualisieren (Fotos bleiben)
+  const fotoAnzahl = m.fotos.length;
+  for (let i = 0; i < m.fotos.length; i++) {
+    await speicherSetzen('mangelfoto:'+m.id+':'+i, { daten: m.fotos[i] });
+  }
+  await speicherSetzen('mangel:'+m.id, { ...m, fotos: [], fotoAnzahl, bearbeitetAm: jetzt, bearbeitetVon: bearbeiter });
+
+  // Index aktualisieren
+  const meta = {
+    id: m.id, kategorie: m.kategorie, aktion: m.aktion, mangelTyp: m.mangelTyp,
+    firma: m.firma, subunternehmer: m.subunternehmer || '',
+    keinSubunternehmer: m.keinSubunternehmer, eintrager: m.eintrager,
+    projekt: m.projekt || '', datum: m.datum, gespeichertAm: m.gespeichertAm,
+    behoben: m.behoben || false, behobenAm: m.behobenAm || null,
+    kritisch: m.kritisch, fotoAnzahl,
+    strasse: m.strasse, ort: m.ort, lat: m.lat, lng: m.lng, __typ: 'index',
+    bearbeitetAm: jetzt, bearbeitetVon: bearbeiter
+  };
+  await speicherSetzen('mangelindex:'+m.id, meta);
+  const idx = mangelIndex.findIndex(e => e.id === m.id);
+  if (idx >= 0) mangelIndex[idx] = meta;
+
+  // Änderungslog-Eintrag speichern
+  if (aenderungen.length > 0) {
+    const logId = m.id + ':' + Date.now().toString(36);
+    await speicherSetzen('mangelaenderung:'+logId, {
+      mangelId: m.id,
+      typ: 'bearbeitung',
+      zeitstempel: jetzt,
+      bearbeiter,
+      aenderungen
+    });
+  }
+
+  meldung('✓ Änderungen gespeichert');
+  bearbeitenModus = false;
+  bearbeitenAltDaten = null;
+  // Zurück zur Ansicht
+  ansichtMangel = { ...m, fotoAnzahl };
+  if (karteInstanz) { karteInstanz.remove(); karteInstanz = null; }
+  karteMarker = null;
+  mangelEntwurf = neuerMangelEntwurf();
+  zeigeTab('logbuch');
+}
+
+// Änderungslog für einen Mangel laden und anzeigen
+async function aenderungslogAnzeigen(mangelId) {
+  meldung('Log wird geladen…');
+  // Alle Log-Einträge holen: Präfix "mangelaenderung:mangelId:"
+  const snap = await db.collection(COL).where(firebase.firestore.FieldPath.documentId(), '>=', 'mangelaenderung:'+mangelId+':')
+    .where(firebase.firestore.FieldPath.documentId(), '<', 'mangelaenderung:'+mangelId+';').get().catch(() => null);
+
+  let eintraege = [];
+  if (snap && !snap.empty) {
+    snap.forEach(doc => eintraege.push(doc.data()));
+  }
+  eintraege.sort((a, b) => (b.zeitstempel || '').localeCompare(a.zeitstempel || ''));
+  meldung('');
+
+  const html = eintraege.length === 0
+    ? '<div style="color:var(--schrift2);font-size:14px;padding:8px 0">Keine Änderungen protokolliert</div>'
+    : eintraege.map(e => `
+      <div style="border-left:3px solid var(--wn-orange);padding:8px 12px;margin-bottom:12px;background:var(--karte);border-radius:0 var(--radius-s) var(--radius-s) 0">
+        <div style="font-size:13px;font-weight:700;color:var(--wn-blau);margin-bottom:4px">
+          ${e.typ === 'loeschung' ? '🗑 Löschen vorbereitet' : '✏️ Bearbeitung'} · ${e.bearbeiter ? esc(e.bearbeiter) : '–'}
+        </div>
+        <div style="font-size:12px;color:var(--schrift2);margin-bottom:6px">${e.zeitstempel ? new Date(e.zeitstempel).toLocaleString('de-DE') : '–'}</div>
+        ${(e.aenderungen||[]).map(a => `
+          <div style="font-size:13px;padding:2px 0">
+            <span style="font-weight:600">${esc(a.feld)}</span>:
+            <span style="color:var(--wn-akzent);text-decoration:line-through">${esc(String(a.alt ?? '–'))}</span>
+            → <span style="color:var(--wn-gruen)">${esc(String(a.neu ?? '–'))}</span>
+          </div>`).join('')}
+        ${e.grund ? `<div style="font-size:12px;color:var(--schrift2);margin-top:4px">Grund: ${esc(e.grund)}</div>` : ''}
+      </div>`).join('');
+
+  bestaetigung('Änderungslog', `<div style="max-height:60vh;overflow-y:auto">${html}</div>`, 'Schließen', () => {});
 }
 
 // Logbuch
@@ -968,6 +1160,14 @@ function zeichneMangelAnsicht() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           Als Bild teilen
         </button>
+        <button class="btn btn-grau" onclick="mangelBearbeitenStarten()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Bearbeiten
+        </button>
+        <button class="btn btn-grau" onclick="aenderungslogAnzeigen('${m.id}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Änderungslog
+        </button>
         <button class="btn btn-rot" id="loeschBtn" onclick="loeschKnopf()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
           Mangel löschen
@@ -1023,7 +1223,31 @@ function loeschKnopf() {
 
 async function mangelLoeschen() {
   const m = ansichtMangel;
+  // Bearbeiter für Log fragen
+  const bearbeiter = prompt('Wer löscht? (Name für Log, Pflichtfeld)');
+  if (!bearbeiter || !bearbeiter.trim()) { meldung('Name erforderlich – Löschen abgebrochen'); return; }
+  const grund = prompt('Grund für Löschung (optional):') || '';
+
   meldung('Wird gelöscht…');
+  const jetzt = new Date().toISOString();
+
+  // Lösch-Log VOR dem Löschen speichern
+  const logId = m.id + ':' + Date.now().toString(36);
+  await speicherSetzen('mangelaenderung:'+logId, {
+    mangelId: m.id,
+    typ: 'loeschung',
+    zeitstempel: jetzt,
+    bearbeiter: bearbeiter.trim(),
+    grund: grund,
+    snapshot: { // Daten zum Zeitpunkt der Löschung
+      kategorie: m.kategorie, mangelTyp: m.mangelTyp, aktion: m.aktion,
+      projekt: m.projekt, firma: m.firma, datum: m.datum,
+      strasse: m.strasse, ort: m.ort, eintrager: m.eintrager
+    },
+    aenderungen: []
+  });
+
+  // Daten löschen
   for (let i = 0; i < (m.fotoAnzahl||(m.fotos?m.fotos.length:0)); i++) {
     await speicherLoeschen('mangelfoto:'+m.id+':'+i);
   }
@@ -1033,6 +1257,147 @@ async function mangelLoeschen() {
   meldung('Mangel gelöscht');
   ansichtMangel = null;
   zeigeTab('logbuch');
+}
+
+// Polygon-Konfiguration: Farbe und Label je Typ
+const POLYGON_TYPEN = {
+  abgenommen: { farbe: '#00843d', label: 'Bereich abgenommen' },
+  maengel:    { farbe: '#e4001b', label: 'Bereich mit Mängeln/unfertig' },
+  offen:      { farbe: '#e87722', label: 'Noch nicht mit Gemeinde abgenommen' },
+  eigen:      { farbe: '#7c3aed', label: 'Eigener Bereich' }
+};
+
+// Polygon-Zeichnen starten
+function polygonZeichnenStarten(typ) {
+  if (!uebersichtKarteInstanz) return;
+  polygonModus = typ;
+  polygonPunkte = [];
+  if (polygonTempLayer) { uebersichtKarteInstanz.removeLayer(polygonTempLayer); polygonTempLayer = null; }
+  document.getElementById('polygonHinweis').style.display = 'block';
+  document.getElementById('polygonHinweis').textContent = `Modus: "${POLYGON_TYPEN[typ].label}" – Klicken zum Punkte setzen, Doppelklick zum Abschließen`;
+  document.getElementById('polygonAbbrBtn').style.display = '';
+  uebersichtKarteInstanz.getContainer().style.cursor = 'crosshair';
+}
+
+// Polygon-Zeichnen abbrechen
+function polygonZeichnenAbbrechen() {
+  polygonModus = null;
+  polygonPunkte = [];
+  if (polygonTempLayer && uebersichtKarteInstanz) { uebersichtKarteInstanz.removeLayer(polygonTempLayer); polygonTempLayer = null; }
+  if (uebersichtKarteInstanz) uebersichtKarteInstanz.getContainer().style.cursor = '';
+  const h = document.getElementById('polygonHinweis');
+  if (h) h.style.display = 'none';
+  const b = document.getElementById('polygonAbbrBtn');
+  if (b) b.style.display = 'none';
+}
+
+// Klick auf Karte: Punkt hinzufügen
+function polygonKarteKlick(e) {
+  if (!polygonModus) return;
+  polygonPunkte.push([e.latlng.lat, e.latlng.lng]);
+  // Temporäre Linie zeichnen
+  if (polygonTempLayer) uebersichtKarteInstanz.removeLayer(polygonTempLayer);
+  if (polygonPunkte.length > 1) {
+    const farbe = POLYGON_TYPEN[polygonModus].farbe;
+    polygonTempLayer = L.polyline(polygonPunkte, { color: farbe, dashArray: '6,4', weight: 2 }).addTo(uebersichtKarteInstanz);
+  }
+  const h = document.getElementById('polygonHinweis');
+  if (h) h.textContent = `${polygonPunkte.length} Punkte gesetzt – Doppelklick zum Abschließen`;
+}
+
+// Doppelklick: Polygon fertigstellen
+function polygonKarteDoppelklick(e) {
+  if (!polygonModus) return;
+  if (polygonPunkte.length < 3) { meldung('Mindestens 3 Punkte nötig'); return; }
+
+  // Namen abfragen
+  const typ = polygonModus;
+  const standardName = POLYGON_TYPEN[typ].label;
+  const name = prompt('Name für diesen Bereich:', standardName) || standardName;
+
+  // Polygon in Liste und auf Karte speichern
+  const poly = {
+    id: Date.now().toString(36),
+    typ, name,
+    punkte: [...polygonPunkte],
+    erstellt: new Date().toISOString()
+  };
+  polygonListe.push(poly);
+  polygonAufKarteZeigen(poly);
+  polygonInFirestoreSpeichern(poly);
+
+  // Zustand zurücksetzen
+  if (polygonTempLayer) { uebersichtKarteInstanz.removeLayer(polygonTempLayer); polygonTempLayer = null; }
+  polygonModus = null;
+  polygonPunkte = [];
+  uebersichtKarteInstanz.getContainer().style.cursor = '';
+  const h = document.getElementById('polygonHinweis');
+  if (h) h.style.display = 'none';
+  const b = document.getElementById('polygonAbbrBtn');
+  if (b) b.style.display = 'none';
+  meldung('✓ Bereich gespeichert: ' + name);
+  polygonListeAktualisieren();
+}
+
+// Polygon auf Karte zeichnen
+function polygonAufKarteZeigen(poly) {
+  if (!uebersichtKarteInstanz || !polygonLayer) return;
+  const cfg = POLYGON_TYPEN[poly.typ] || POLYGON_TYPEN.eigen;
+  const p = L.polygon(poly.punkte, {
+    color: cfg.farbe,
+    fillColor: cfg.farbe,
+    fillOpacity: 0.15,
+    weight: 2
+  }).addTo(polygonLayer);
+  p.bindPopup(`<b>${esc(poly.name)}</b><br><span style="color:${cfg.farbe}">${esc(cfg.label)}</span><br><small>${new Date(poly.erstellt).toLocaleDateString('de-DE')}</small><br><button onclick="polygonLoeschen('${poly.id}')" style="margin-top:6px;padding:2px 8px;background:#e4001b;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px">Löschen</button>`);
+  poly._layer = p;
+}
+
+// Polygon in Firestore speichern
+async function polygonInFirestoreSpeichern(poly) {
+  try {
+    await speicherSetzen('polygon:'+poly.id, { ...poly, _layer: undefined });
+  } catch(e) { console.warn('Polygon speichern fehlgeschlagen', e); }
+}
+
+// Polygon löschen
+async function polygonLoeschen(id) {
+  const idx = polygonListe.findIndex(p => p.id === id);
+  if (idx < 0) return;
+  const poly = polygonListe[idx];
+  if (poly._layer && uebersichtKarteInstanz) { polygonLayer.removeLayer(poly._layer); }
+  polygonListe.splice(idx, 1);
+  await speicherLoeschen('polygon:'+id);
+  meldung('Bereich gelöscht');
+  polygonListeAktualisieren();
+  // Popup schließen
+  if (uebersichtKarteInstanz) uebersichtKarteInstanz.closePopup();
+}
+
+// Polygon-Kurzliste unter Karte aktualisieren
+function polygonListeAktualisieren() {
+  const el = document.getElementById('polygonListeKurz');
+  if (!el) return;
+  if (!polygonListe.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div style="font-size:12px;font-weight:700;color:var(--schrift2);margin-bottom:4px">Gespeicherte Bereiche (${polygonListe.length}):</div>` +
+    polygonListe.map(p => {
+      const cfg = POLYGON_TYPEN[p.typ] || POLYGON_TYPEN.eigen;
+      return `<div style="display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 0">
+        <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${cfg.farbe};flex-shrink:0"></span>
+        <span style="flex:1">${esc(p.name)}</span>
+        <button onclick="polygonLoeschen('${p.id}')" style="padding:1px 7px;background:#e4001b;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:11px">✕</button>
+      </div>`;
+    }).join('');
+}
+
+// Alle Polygone aus Firestore laden
+async function polygoneLaden() {
+  try {
+    const snap = await db.collection(COL).where(firebase.firestore.FieldPath.documentId(), '>=', 'polygon:')
+      .where(firebase.firestore.FieldPath.documentId(), '<', 'polygon;').get();
+    polygonListe = [];
+    snap.forEach(doc => polygonListe.push({ ...doc.data(), id: doc.id.replace('polygon:', '') }));
+  } catch(e) { polygonListe = []; }
 }
 
 // Übersicht (große Karte + Auswertung)
@@ -1107,10 +1472,22 @@ function zeichneAuswertung() {
       ${kritisch} kritische Mängel offen
     </div>`:''}
 
-    <!-- Große Karte mit allen Mängeln -->
+    <!-- Große Karte mit allen Mängeln + Polygon-Zeichnen -->
     <div class="karte">
       <h3>Karte – Alle Mängel (${mangelIndex.filter(e=>e.lat).length} mit GPS · ${mangelIndex.filter(e=>!e.lat&&(e.strasse||e.ort)).length} per Adresse)</h3>
       <div id="uebersichtKarte"></div>
+      <!-- Polygon-Werkzeuge -->
+      <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        <span style="font-size:12px;font-weight:700;color:var(--schrift2)">Bereiche zeichnen:</span>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('abgenommen')" style="border-left:3px solid #00843d">✓ Abgenommen</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('maengel')" style="border-left:3px solid #e4001b">⚠ Mängel/Unfertig</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('offen')" style="border-left:3px solid #e87722">⏳ Nicht abgenommen</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenStarten('eigen')" style="border-left:3px solid #7c3aed">◈ Eigener Bereich</button>
+        <button class="btn btn-grau btn-sm" onclick="polygonZeichnenAbbrechen()" id="polygonAbbrBtn" style="display:none">✕ Abbrechen</button>
+      </div>
+      <div id="polygonHinweis" style="display:none;font-size:12px;color:var(--wn-orange);font-weight:600;padding:6px 0">Klicke auf die Karte um Punkte zu setzen. Doppelklick zum Abschließen.</div>
+      <!-- Gespeicherte Polygone verwalten -->
+      <div id="polygonListeKurz" style="margin-top:8px"></div>
       <div class="legende-reihe" style="margin-top:10px">
         ${aktiveKat.map(k=>`<div class="legende-item"><div class="legende-dot" style="background:${MANGEL_FARBEN[k]||'#003976'}"></div>${esc(k)}</div>`).join('')}
       </div>
@@ -1182,13 +1559,30 @@ function zeichneAuswertung() {
   setTimeout(async () => {
     const el = document.getElementById('uebersichtKarte');
     if (!el || typeof L === 'undefined') return;
-    if (uebersichtKarteInstanz) { uebersichtKarteInstanz.remove(); uebersichtKarteInstanz = null; }
-    uebersichtKarteInstanz = L.map('uebersichtKarte').setView([51.4, 8.0], 11);
+    if (uebersichtKarteInstanz) { uebersichtKarteInstanz.remove(); uebersichtKarteInstanz = null; polygonLayer = null; }
+    uebersichtKarteInstanz = L.map('uebersichtKarte', { doubleClickZoom: false }).setView([51.4, 8.0], 11);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:'© OpenStreetMap', maxZoom:19
     }).addTo(uebersichtKarteInstanz);
 
+    // Polygon-Layer anlegen und bestehende Polygone laden
+    polygonLayer = L.layerGroup().addTo(uebersichtKarteInstanz);
+    await polygoneLaden();
+    polygonListe.forEach(p => polygonAufKarteZeigen(p));
+    polygonListeAktualisieren();
+
+    // Klick-Handler für Polygon-Zeichnen
+    uebersichtKarteInstanz.on('click', function(e) {
+      polygonKarteKlick(e);
+    });
+    // Doppelklick-Handler zum Abschließen
+    uebersichtKarteInstanz.on('dblclick', function(e) {
+      polygonKarteDoppelklick(e);
+    });
+
     const bounds = [];
+    // Kurzer Debug: was hat mangelIndex an Standortdaten
+    console.log('mangelIndex Einträge:', mangelIndex.length, mangelIndex.map(e=>({id:e.id,lat:e.lat,lng:e.lng,strasse:e.strasse,ort:e.ort})));
 
     // Hilfsfunktion: Marker auf Karte setzen
     function setzeMarker(e, lat, lng, perAdresse) {
